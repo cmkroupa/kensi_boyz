@@ -2,11 +2,10 @@ class GamesController < ApplicationController
   before_action :set_game, only: %i[ show edit update destroy ]
 
   def index
-    games_1v1 = Game.order(played_at: :desc)
-                    .includes(:winner, :loser)
-    games_2v2 = TeamGame.order(played_at: :desc)
-                        .includes(winning_team: [ :player1, :player2 ], losing_team: [ :player1, :player2 ])
-    @all_games = (games_1v1.to_a + games_2v2.to_a)
+    @filter = params[:type]
+    games_1v1 = @filter == "2v2" ? [] : Game.order(played_at: :desc).includes(:winner, :loser).to_a
+    games_2v2 = @filter == "1v1" ? [] : TeamGame.order(played_at: :desc).includes(winning_team: [ :player1, :player2 ], losing_team: [ :player1, :player2 ]).to_a
+    @all_games = (games_1v1 + games_2v2)
                    .sort_by { |g| g.played_at || Time.at(0) }
                    .reverse
   end
@@ -20,6 +19,7 @@ class GamesController < ApplicationController
   end
 
   def edit
+    @players = Player.order(:name)
   end
 
   def create
@@ -28,15 +28,17 @@ class GamesController < ApplicationController
     score1 = params[:game][:player1_score].to_i
     score2 = params[:game][:player2_score].to_i
 
+    draw = score1 == score2
+
     winner, loser, winner_score, loser_score =
-      if score1 >= score2
+      if score1 > score2
         [ player1, player2, score1, score2 ]
       else
         [ player2, player1, score2, score1 ]
       end
 
-    new_winner_elo = EloCalculator.update_elo(winner.elo, loser.elo, winner_score, loser_score)
-    new_loser_elo  = EloCalculator.update_elo(loser.elo, winner.elo, loser_score, winner_score)
+    new_p1_elo = EloCalculator.update_elo(winner.elo, loser.elo, winner_score, loser_score)
+    new_p2_elo = EloCalculator.update_elo(loser.elo, winner.elo, loser_score, winner_score)
 
     @game = Game.new(
       winner: winner,
@@ -47,9 +49,15 @@ class GamesController < ApplicationController
     )
 
     if @game.save
-      winner.update!(elo: new_winner_elo, wins: winner.wins.to_i + 1)
-      loser.update!(elo: new_loser_elo, losses: loser.losses.to_i + 1)
-      redirect_to players_path, notice: "#{winner.name} beat #{loser.name} #{winner_score}–#{loser_score}."
+      if draw
+        winner.update!(elo: new_p1_elo)
+        loser.update!(elo: new_p2_elo)
+        redirect_to players_path, notice: "#{winner.name} and #{loser.name} drew #{winner_score}–#{loser_score}."
+      else
+        winner.update!(elo: new_p1_elo, wins: winner.wins.to_i + 1)
+        loser.update!(elo: new_p2_elo, losses: loser.losses.to_i + 1)
+        redirect_to players_path, notice: "#{winner.name} beat #{loser.name} #{winner_score}–#{loser_score}."
+      end
     else
       @players = Player.order(:name)
       render :new, status: :unprocessable_entity

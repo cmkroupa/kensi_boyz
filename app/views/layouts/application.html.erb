@@ -12,16 +12,16 @@
   </head>
 
   <body>
-    <nav>
-      <%= link_to "Foosball", root_path, class: "nav-brand" %>
-      <div class="nav-links">
-        <%= link_to "Leaderboard", players_path %>
-        <%= link_to "History", games_path %>
-        <%= link_to "1v1", new_game_path %>
-        <%= link_to "2v2", new_team_game_path %>
-        <%= link_to "Add Player", new_player_path %>
-      </div>
-    </nav>
+    <% unless controller_name == "home" %>
+      <nav>
+        <%= link_to "KFL", root_path, class: "nav-brand" %>
+        <div class="nav-links">
+          <%= link_to "Leaderboard", players_path %>
+          <%= link_to "History", games_path %>
+          <%= link_to "Log", new_game_path %>
+        </div>
+      </nav>
+    <% end %>
 
     <% if notice.present? %>
       <div class="flash-notice"><%= notice %></div>

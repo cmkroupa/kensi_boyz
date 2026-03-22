@@ -3,8 +3,9 @@
 <div class="page-header">
   <h1>Game History</h1>
   <div style="display: flex; gap: 0.5rem;">
-    <%= link_to "1v1", new_game_path, class: "btn btn-secondary" %>
-    <%= link_to "2v2", new_team_game_path, class: "btn btn-primary" %>
+    <%= link_to "All", games_path, class: "btn #{@filter.nil? ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "1v1", games_path(type: "1v1"), class: "btn #{@filter == '1v1' ? 'btn-primary' : 'btn-secondary'}" %>
+    <%= link_to "2v2", games_path(type: "2v2"), class: "btn #{@filter == '2v2' ? 'btn-primary' : 'btn-secondary'}" %>
   </div>
 </div>
 
@@ -16,9 +17,9 @@
       <thead>
         <tr>
           <th>Type</th>
-          <th>Winner</th>
+          <th>Player 1</th>
           <th>Score</th>
-          <th>Loser</th>
+          <th>Player 2</th>
           <th>Date</th>
         </tr>
       </thead>
@@ -26,7 +27,11 @@
         <% @all_games.each do |game| %>
           <tr>
             <% if game.is_a?(Game) %>
-              <td><span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af;">1v1</span></td>
+              <% draw = game.winner_score == game.loser_score %>
+              <td>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af;">1v1</span>
+                <% if draw %><span style="font-size: 0.7rem; font-weight: 700; color: #f59e0b; margin-left: 4px;">DRAW</span><% end %>
+              </td>
               <td><%= link_to game.winner.name, game.winner, class: "player-name-link" %></td>
               <td style="font-variant-numeric: tabular-nums; font-weight: 700; color: #374151;">
                 <%= game.winner_score %>–<%= game.loser_score %>

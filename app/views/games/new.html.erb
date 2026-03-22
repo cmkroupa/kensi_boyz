@@ -4,6 +4,10 @@
 
 <div class="page-header">
   <h1>Log Game</h1>
+  <div class="log-toggle">
+    <span class="log-toggle-opt active">1v1</span>
+    <%= link_to "2v2", new_team_game_path, class: "log-toggle-opt" %>
+  </div>
 </div>
 
 <%= render "form", game: @game, players: @players %>

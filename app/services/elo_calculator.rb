@@ -12,13 +12,12 @@ module EloCalculator
     margin_multiplier = Math.log(score_diff + 1)
     actual_score = if player_score > opponent_score
                      1.0
-                   elsif player_score < opponent_score
+    elsif player_score < opponent_score
                      0.0
-                   else
+    else
                      0.5
-                   end
+    end
     new_rating = player_elo + (K * margin_multiplier) * (actual_score - expected_win)
     [ new_rating.round, 0 ].max
   end
-
 end

@@ -17,10 +17,10 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create game" do
     assert_difference("Game.count") do
-      post games_url, params: { game: { loser_id: @game.loser_id, loser_score: @game.loser_score, played_at: @game.played_at, winner_id: @game.winner_id, winner_score: @game.winner_score } }
+      post games_url, params: { game: { player1_id: players(:one).id, player2_id: players(:two).id, player1_score: 3, player2_score: 1 } }
     end
 
-    assert_redirected_to game_url(Game.last)
+    assert_redirected_to players_url
   end
 
   test "should show game" do
@@ -43,6 +43,6 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
       delete game_url(@game)
     end
 
-    assert_redirected_to games_url
+    assert_redirected_to players_url
   end
 end

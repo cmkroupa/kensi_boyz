@@ -56,6 +56,32 @@ nav {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* ---- Log type toggle ---- */
+
+.log-toggle {
+  display: flex;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.log-toggle-opt {
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.log-toggle-opt.active {
+  background: white;
+  color: #1a1a2e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
 /* ---- Flash ---- */
 
 .flash-notice {
@@ -472,4 +498,201 @@ nav {
   border-top: 1px solid #f0f0f0;
   display: flex;
   gap: 0.75rem;
+}
+
+/* ---- Leagues home ---- */
+
+.leagues-page {
+  max-width: 480px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.leagues-page h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a1a2e;
+}
+
+.leagues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.league-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  color: #1a1a2e;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.league-card:hover {
+  border-color: #4361ee;
+  box-shadow: 0 2px 8px rgba(67, 97, 238, 0.12);
+}
+
+.league-arrow {
+  color: #9ca3af;
+  font-size: 1.1rem;
+}
+
+/* ---- Mobile ---- */
+
+@media (max-width: 640px) {
+  /* Nav */
+  nav {
+    padding: 0 1rem;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .nav-brand {
+    height: 52px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-links {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0 0.5rem;
+    gap: 0.25rem;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  /* Layout */
+  .container {
+    padding: 1.25rem 1rem;
+  }
+
+  .page-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.85rem;
+  }
+
+  /* Leaderboard table */
+  .leaderboard th,
+  .leaderboard td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  /* Hide Win% column on mobile */
+  .leaderboard th:last-child,
+  .leaderboard td:last-child {
+    display: none;
+  }
+
+  /* History table — make scrollable */
+  .card {
+    overflow-x: auto;
+  }
+
+  /* Player profile stats */
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-cell:nth-child(2) {
+    border-right: none;
+  }
+
+  .stat-cell:nth-child(1),
+  .stat-cell:nth-child(2) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* Game form VS grid — stack vertically */
+  .game-vs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vs-badge {
+    padding-top: 0;
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+  }
+
+  /* Form card */
+  .form-card {
+    padding: 1.25rem;
+  }
+
+  /* Profile header */
+  .profile-header {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
+  }
+
+  .profile-header h2 {
+    font-size: 1.2rem;
+  }
+
+  /* History rows */
+  .history-section {
+    padding: 1rem;
+  }
+
+  .game-row {
+    gap: 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .game-row .date {
+    display: none;
+  }
+
+  /* Leagues home */
+  .leagues-page {
+    margin: 2rem auto;
+  }
+
+  .leagues-page h1 {
+    font-size: 1.6rem;
+  }
+
+  /* Flash */
+  .flash-notice,
+  .flash-alert {
+    padding: 0.65rem 1rem;
+  }
 }

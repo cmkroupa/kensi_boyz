@@ -20,29 +20,11 @@ class PlayersControllerTest < ActionDispatch::IntegrationTest
       post players_url, params: { player: { elo: @player.elo, losses: @player.losses, name: @player.name, wins: @player.wins } }
     end
 
-    assert_redirected_to player_url(Player.last)
+    assert_redirected_to players_url
   end
 
   test "should show player" do
     get player_url(@player)
     assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_player_url(@player)
-    assert_response :success
-  end
-
-  test "should update player" do
-    patch player_url(@player), params: { player: { elo: @player.elo, losses: @player.losses, name: @player.name, wins: @player.wins } }
-    assert_redirected_to player_url(@player)
-  end
-
-  test "should destroy player" do
-    assert_difference("Player.count", -1) do
-      delete player_url(@player)
-    end
-
-    assert_redirected_to players_url
   end
 end

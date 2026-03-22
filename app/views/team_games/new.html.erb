@@ -3,7 +3,11 @@
 <%= link_to "← Leaderboard", players_path, class: "back-link" %>
 
 <div class="page-header">
-  <h1>Log 2v2 Game</h1>
+  <h1>Log Game</h1>
+  <div class="log-toggle">
+    <%= link_to "1v1", new_game_path, class: "log-toggle-opt" %>
+    <span class="log-toggle-opt active">2v2</span>
+  </div>
 </div>
 
 <%= render "form", players: @players %>
