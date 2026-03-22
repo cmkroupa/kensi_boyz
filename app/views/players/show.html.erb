@@ -1,0 +1,77 @@
+<% content_for :title, @player.name %>
+
+<%= link_to "← Leaderboard", players_path, class: "back-link" %>
+
+<div class="card">
+  <div class="profile-header">
+    <div class="avatar"><%= @player.name[0].upcase %></div>
+    <div>
+      <h2><%= @player.name %></h2>
+      <div class="rank-text">Rank #<%= @rank %></div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-cell">
+      <div class="value elo"><%= @player.elo || 1200 %></div>
+      <div class="label">ELO</div>
+    </div>
+    <div class="stat-cell">
+      <div class="value wins"><%= @player.wins || 0 %></div>
+      <div class="label">Wins</div>
+    </div>
+    <div class="stat-cell">
+      <div class="value loss"><%= @player.losses || 0 %></div>
+      <div class="label">Losses</div>
+    </div>
+    <div class="stat-cell">
+      <% total = (@player.wins || 0) + (@player.losses || 0) %>
+      <div class="value"><%= total > 0 ? "#{"%.0f" % ((@player.wins.to_f / total) * 100)}%" : "—" %></div>
+      <div class="label">Win Rate</div>
+    </div>
+  </div>
+
+  <div class="history-section">
+    <h3>Recent 1v1 Games</h3>
+    <% if @recent_games.empty? %>
+      <p style="color: #9ca3af; font-size: 0.875rem;">No games played yet.</p>
+    <% else %>
+      <% @recent_games.each do |game| %>
+        <% won = game.winner_id == @player.id %>
+        <% opponent = won ? game.loser : game.winner %>
+        <div class="game-row">
+          <span class="result-pill <%= won ? 'win' : 'loss' %>"><%= won ? 'W' : 'L' %></span>
+          <%= link_to "vs #{opponent.name}", opponent, class: "opponent" %>
+          <span class="score">
+            <%= won ? "#{game.winner_score}–#{game.loser_score}" : "#{game.loser_score}–#{game.winner_score}" %>
+          </span>
+          <span class="date"><%= game.played_at&.strftime("%b %-d") %></span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="history-section" style="border-top: 1px solid #f0f0f0;">
+    <h3>Recent 2v2 Games</h3>
+    <% if @recent_team_games.empty? %>
+      <p style="color: #9ca3af; font-size: 0.875rem;">No team games played yet.</p>
+    <% else %>
+      <% @recent_team_games.each do |tg| %>
+        <% my_team = [ tg.winning_team, tg.losing_team ].find { |t| t.player1_id == @player.id || t.player2_id == @player.id } %>
+        <% won = my_team == tg.winning_team %>
+        <% opponent_team = won ? tg.losing_team : tg.winning_team %>
+        <div class="game-row">
+          <span class="result-pill <%= won ? 'win' : 'loss' %>"><%= won ? 'W' : 'L' %></span>
+          <span class="opponent">
+            vs <%= link_to opponent_team.player1.name, opponent_team.player1, style: "color: inherit;" %> &amp; <%= link_to opponent_team.player2.name, opponent_team.player2, style: "color: inherit;" %>
+          </span>
+          <span class="score">
+            <%= won ? "#{tg.winner_score}–#{tg.loser_score}" : "#{tg.loser_score}–#{tg.winner_score}" %>
+          </span>
+          <span class="date"><%= tg.played_at&.strftime("%b %-d") %></span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+</div>

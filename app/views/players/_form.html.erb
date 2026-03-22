@@ -1,0 +1,24 @@
+<div class="form-card">
+  <%= form_with(model: player) do |form| %>
+    <% if player.errors.any? %>
+      <div class="error-box">
+        <strong><%= pluralize(player.errors.count, "error") %>:</strong>
+        <ul>
+          <% player.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= form.label :name, "Name" %>
+      <%= form.text_field :name, placeholder: "Player name" %>
+    </div>
+
+    <div class="form-actions">
+      <%= form.submit player.new_record? ? "Add Player" : "Save Changes", class: "btn btn-primary" %>
+      <%= link_to "Cancel", players_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

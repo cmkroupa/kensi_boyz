@@ -1,0 +1,52 @@
+<div class="form-card wide">
+  <%= form_with(url: team_games_path, method: :post) do |form| %>
+
+    <div class="game-vs-grid">
+      <div>
+        <div class="form-group">
+          <label>Team 1 — Player 1</label>
+          <%= select_tag :team1_player1_id,
+              options_from_collection_for_select(players, :id, :name),
+              prompt: "Select player" %>
+        </div>
+        <div class="form-group">
+          <label>Team 1 — Player 2</label>
+          <%= select_tag :team1_player2_id,
+              options_from_collection_for_select(players, :id, :name),
+              prompt: "Select player" %>
+        </div>
+        <div class="form-group">
+          <label>Score</label>
+          <%= number_field_tag :team1_score, nil, min: 0, class: "score-input" %>
+        </div>
+      </div>
+
+      <div class="vs-badge">VS</div>
+
+      <div>
+        <div class="form-group">
+          <label>Team 2 — Player 1</label>
+          <%= select_tag :team2_player1_id,
+              options_from_collection_for_select(players, :id, :name),
+              prompt: "Select player" %>
+        </div>
+        <div class="form-group">
+          <label>Team 2 — Player 2</label>
+          <%= select_tag :team2_player2_id,
+              options_from_collection_for_select(players, :id, :name),
+              prompt: "Select player" %>
+        </div>
+        <div class="form-group">
+          <label>Score</label>
+          <%= number_field_tag :team2_score, nil, min: 0, class: "score-input" %>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 1.25rem;">
+      ELO updates use each team's average rating as the opponent strength.
+    </p>
+
+    <%= form.submit "Log Result", class: "btn btn-primary", style: "width: 100%; justify-content: center; padding: 0.7rem;" %>
+  <% end %>
+</div>

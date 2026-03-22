@@ -1,0 +1,9 @@
+<% content_for :title, "Log Game" %>
+
+<%= link_to "← Leaderboard", players_path, class: "back-link" %>
+
+<div class="page-header">
+  <h1>Log Game</h1>
+</div>
+
+<%= render "form", game: @game, players: @players %>

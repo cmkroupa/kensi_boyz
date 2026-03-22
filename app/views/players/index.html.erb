@@ -1,0 +1,50 @@
+<% content_for :title, "Leaderboard" %>
+
+<div class="page-header">
+  <h1>Leaderboard</h1>
+  <%= link_to "Log Game", new_game_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <table class="leaderboard">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Player</th>
+        <th>ELO</th>
+        <th>W</th>
+        <th>L</th>
+        <th>Win %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @players.empty? %>
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              No players yet. <%= link_to "Add the first one", new_player_path %>.
+            </div>
+          </td>
+        </tr>
+      <% else %>
+        <% @players.each_with_index do |player, i| %>
+          <tr>
+            <td>
+              <span class="rank-num <%= %w[gold silver bronze][i] %>">
+                <%= i + 1 %>
+              </span>
+            </td>
+            <td><%= link_to player.name, player, class: "player-name-link" %></td>
+            <td><span class="elo-value"><%= player.elo || 1200 %></span></td>
+            <td><span class="stat-win"><%= player.wins || 0 %></span></td>
+            <td><span class="stat-loss"><%= player.losses || 0 %></span></td>
+            <td>
+              <% total = (player.wins || 0) + (player.losses || 0) %>
+              <%= total > 0 ? "#{"%.1f" % ((player.wins.to_f / total) * 100)}%" : "—" %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

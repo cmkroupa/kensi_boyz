@@ -1,0 +1,59 @@
+<% content_for :title, "Game History" %>
+
+<div class="page-header">
+  <h1>Game History</h1>
+  <div style="display: flex; gap: 0.5rem;">
+    <%= link_to "1v1", new_game_path, class: "btn btn-secondary" %>
+    <%= link_to "2v2", new_team_game_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<div class="card">
+  <% if @all_games.empty? %>
+    <div class="empty-state">No games logged yet.</div>
+  <% else %>
+    <table class="leaderboard">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Winner</th>
+          <th>Score</th>
+          <th>Loser</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @all_games.each do |game| %>
+          <tr>
+            <% if game.is_a?(Game) %>
+              <td><span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af;">1v1</span></td>
+              <td><%= link_to game.winner.name, game.winner, class: "player-name-link" %></td>
+              <td style="font-variant-numeric: tabular-nums; font-weight: 700; color: #374151;">
+                <%= game.winner_score %>–<%= game.loser_score %>
+              </td>
+              <td><%= link_to game.loser.name, game.loser, class: "player-name-link" %></td>
+            <% else %>
+              <td><span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af;">2v2</span></td>
+              <td>
+                <%= link_to game.winning_team.player1.name, game.winning_team.player1, class: "player-name-link" %>
+                &amp;
+                <%= link_to game.winning_team.player2.name, game.winning_team.player2, class: "player-name-link" %>
+              </td>
+              <td style="font-variant-numeric: tabular-nums; font-weight: 700; color: #374151;">
+                <%= game.winner_score %>–<%= game.loser_score %>
+              </td>
+              <td>
+                <%= link_to game.losing_team.player1.name, game.losing_team.player1, class: "player-name-link" %>
+                &amp;
+                <%= link_to game.losing_team.player2.name, game.losing_team.player2, class: "player-name-link" %>
+              </td>
+            <% end %>
+            <td style="color: #9ca3af; font-size: 0.8rem;">
+              <%= game.played_at&.strftime("%b %-d, %Y") %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Foosball" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <nav>
+      <%= link_to "Foosball", root_path, class: "nav-brand" %>
+      <div class="nav-links">
+        <%= link_to "Leaderboard", players_path %>
+        <%= link_to "History", games_path %>
+        <%= link_to "1v1", new_game_path %>
+        <%= link_to "2v2", new_team_game_path %>
+        <%= link_to "Add Player", new_player_path %>
+      </div>
+    </nav>
+
+    <% if notice.present? %>
+      <div class="flash-notice"><%= notice %></div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="flash-alert"><%= alert %></div>
+    <% end %>
+
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,475 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f4f5f7;
+  color: #1a1a2e;
+}
+
+/* ---- Nav ---- */
+
+nav {
+  background: #1a1a2e;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-links a:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Flash ---- */
+
+.flash-notice {
+  background: #dcfce7;
+  color: #166534;
+  padding: 0.75rem 2rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #bbf7d0;
+}
+
+.flash-alert {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.75rem 2rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #fecaca;
+}
+
+/* ---- Layout ---- */
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #1a1a2e;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: #4361ee;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #3451d1;
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  border-color: #9ca3af;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+/* ---- Card ---- */
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* ---- Leaderboard ---- */
+
+.leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard th {
+  padding: 0.7rem 1.25rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #9ca3af;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.leaderboard td {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.leaderboard tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard tbody tr:hover td {
+  background: #fafbff;
+}
+
+.rank-num {
+  font-weight: 700;
+  color: #d1d5db;
+  font-size: 0.85rem;
+  width: 2rem;
+}
+
+.rank-num.gold   { color: #f59e0b; }
+.rank-num.silver { color: #9ca3af; }
+.rank-num.bronze { color: #cd7c3a; }
+
+.player-name-link {
+  font-weight: 600;
+  color: #1a1a2e;
+  text-decoration: none;
+}
+
+.player-name-link:hover {
+  color: #4361ee;
+}
+
+.elo-value {
+  font-weight: 700;
+  color: #4361ee;
+  font-size: 0.95rem;
+}
+
+.stat-win  { color: #16a34a; font-weight: 600; }
+.stat-loss { color: #dc2626; font-weight: 600; }
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 3rem 1rem;
+  font-size: 0.9rem;
+}
+
+.empty-state a {
+  color: #4361ee;
+}
+
+/* ---- Forms ---- */
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  max-width: 480px;
+}
+
+.form-card.wide {
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+}
+
+.form-group input.score-input {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0.5rem;
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.error-box {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: #991b1b;
+}
+
+.error-box ul {
+  margin: 0.4rem 0 0 1.1rem;
+}
+
+/* ---- Game form - VS layout ---- */
+
+.game-vs-grid {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+.vs-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1.8rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #d1d5db;
+  letter-spacing: 1px;
+}
+
+/* ---- Player profile ---- */
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  background: #4361ee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.profile-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.profile-header .rank-text {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 0.2rem;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-cell {
+  padding: 1.25rem;
+  text-align: center;
+  border-right: 1px solid #f0f0f0;
+}
+
+.stat-cell:last-child {
+  border-right: none;
+}
+
+.stat-cell .value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.stat-cell .value.elo   { color: #4361ee; }
+.stat-cell .value.wins  { color: #16a34a; }
+.stat-cell .value.loss  { color: #dc2626; }
+
+.stat-cell .label {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 0.25rem;
+}
+
+/* ---- Game history ---- */
+
+.history-section {
+  padding: 1.5rem;
+}
+
+.history-section h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.game-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 0.875rem;
+}
+
+.game-row:last-child {
+  border-bottom: none;
+}
+
+.result-pill {
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.result-pill.win  { background: #dcfce7; color: #16a34a; }
+.result-pill.loss { background: #fee2e2; color: #dc2626; }
+
+.game-row .opponent {
+  flex: 1;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.game-row .opponent:hover { color: #4361ee; }
+
+.game-row .score {
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-row .date {
+  color: #d1d5db;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.profile-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 0.75rem;
+}
