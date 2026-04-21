@@ -160,7 +160,9 @@ GEM
     mcp (0.9.0)
       json-schema (>= 4.1)
     mini_mime (1.1.5)
-    minitest (5.27.0)
+    minitest (6.0.5)
+      drb (~> 2.0)
+      prism (~> 1.5)
     msgpack (1.8.0)
     net-imap (0.6.3)
       date
@@ -380,7 +382,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
-  minitest (~> 5.1)
+  minitest (~> 6.0)
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.4)
