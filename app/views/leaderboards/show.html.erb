@@ -8,7 +8,7 @@
 
 <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
   <div class="inline-flex rounded-full bg-slate-200 p-1 text-base">
-    <% { "ratings" => [ "Ratings", root_path(mode: current_mode) ], "money" => [ "Money", root_path(view: "money") ], "activity" => [ "Activity", root_path(view: "activity") ] }.each do |view, (label, path)| %>
+    <% { "ratings" => [ "Ratings", root_path(mode: current_mode) ], "money" => [ "Money", root_path(view: "money") ] }.each do |view, (label, path)| %>
       <%= link_to label, path, class: [ "rounded-full px-4 py-1.5 font-medium", view == @view ? "bg-white shadow-sm" : "text-slate-500" ] %>
     <% end %>
   </div>
