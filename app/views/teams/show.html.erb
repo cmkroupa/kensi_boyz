@@ -15,6 +15,10 @@
   <% [
     [ "Record", "#{@partnership.wins}-#{@partnership.losses}", "" ],
     [ "Win rate", percent_text(@partnership.win_rate), "" ],
+    [ "Goals for", @partnership.goals_for, "" ],
+    [ "Goals against", @partnership.goals_against, "" ],
+    [ "Goal difference", goal_difference_text(@partnership.goals_for, @partnership.goals_against), goal_difference_class(@partnership.goals_for, @partnership.goals_against) ],
+    [ "Clean sheets", @partnership.clean_sheets, "" ],
     [ "Streak", @partnership.current_streak.label, streak_class(@partnership.current_streak) ],
     [ "Best win streak", "#{@partnership.longest_win_streak}W", "" ]
   ].each do |label, value, color| %>

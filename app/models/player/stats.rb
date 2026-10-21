@@ -21,6 +21,11 @@ module Player::Stats
     all.empty? ? nil : all.count(&:won?).fdiv(all.size)
   end
 
+  # Goals scored and conceded across every game, and games where nothing was conceded.
+  def goals_for(mode) = results(mode).sum(&:points)
+  def goals_against(mode) = results(mode).sum(&:opponent_points)
+  def clean_sheets(mode) = results(mode).count { |result| result.opponent_points.zero? }
+
   def current_streak(mode)
     latest_first = results(mode).reverse
     return Streak.new(true, 0) if latest_first.empty?

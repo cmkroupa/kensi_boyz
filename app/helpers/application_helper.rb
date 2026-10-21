@@ -60,6 +60,17 @@ module ApplicationHelper
     end
   end
 
+  def goal_difference_text(goals_for, goals_against)
+    difference = goals_for - goals_against
+    difference.positive? ? "+#{difference}" : difference.to_s.tr("-", "−")
+  end
+
+  def goal_difference_class(goals_for, goals_against)
+    difference = goals_for - goals_against
+    return "text-slate-900" if difference.zero?
+    difference.positive? ? "text-green-600" : "text-red-500"
+  end
+
   def percent_text(fraction) = fraction ? "#{(fraction * 100).round}%" : "—"
 
   def names(participations)

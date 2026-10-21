@@ -1,5 +1,5 @@
 # Each time a league record was set or beaten, in order. The latest row for a
-# key and scope is the current record. Rebuilt by AchievementReplay.
+# key and scope is the current record. Rebuilt by RecordReplay.
 class RecordBreak < ApplicationRecord
   LABELS = {
     "win_streak" => "Longest win streak",

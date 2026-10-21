@@ -70,4 +70,20 @@ class HeadToHeadTest < ActiveSupport::TestCase
     assert_equal [ "Cam", "Quinn" ], versus([ @cam ], [ @quinn ]).series.map(&:name)
     assert_empty versus([ @tyler ], [ @evan ]).series
   end
+
+  test "goals and clean sheets add up from a player's results" do
+    log("singles", [ @cam ], [ @quinn ], 8, 0)
+    log("singles", [ @quinn ], [ @cam ], 8, 6)
+
+    assert_equal [ 14, 8, 1 ], [ @cam.goals_for("singles"), @cam.goals_against("singles"), @cam.clean_sheets("singles") ]
+    assert_equal [ 8, 14, 0 ], [ @quinn.goals_for("singles"), @quinn.goals_against("singles"), @quinn.clean_sheets("singles") ]
+  end
+
+  test "a pair's goals and clean sheets" do
+    log("doubles", [ @cam, @quinn ], [ @tyler, @evan ], 8, 0)
+    log("doubles", [ @tyler, @evan ], [ @cam, @quinn ], 8, 5)
+    pair = Partnership.between(@cam, @quinn)
+
+    assert_equal [ 13, 8, 1 ], [ pair.goals_for, pair.goals_against, pair.clean_sheets ]
+  end
 end

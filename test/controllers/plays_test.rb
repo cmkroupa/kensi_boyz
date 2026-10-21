@@ -163,18 +163,16 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "a[href*='head_to_head']", text: "Matchups"
   end
 
-  test "badges show on the profile and on the game that earned them" do
-    game = Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0,
-      side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+  test "a record shows on the game that set it" do
+    Game.create!(mode: "singles", side_a_score: 8, side_b_score: 4, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    get game_path(Game.last)
+    assert_select "h2", text: "Records set in this game", count: 0
 
-    get player_path(@cam)
-    assert_select "h2", text: /Achievements · 1/
-    assert_select "li", text: /Shutout/
-    assert_select "summary", text: /Not yet earned/
+    blowout = Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    get game_path(blowout)
 
-    get game_path(game)
-    assert_select "h2", text: "Earned in this game"
-    assert_select "li", text: /Cam.*Shutout/m
+    assert_select "h2", text: "Records set in this game"
+    assert_select "li", text: /Biggest blowout/
   end
 
   test "the records page lists what has been set" do
@@ -186,7 +184,6 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "body", text: /Longest win streak \(1v1\)/
     assert_select "body", text: /3 wins/
-    assert_select "h2", text: "Latest badges"
     assert_select "a", text: "← Leaderboard"
   end
 
@@ -226,5 +223,22 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "a[aria-current=page]", text: "Matchups"
     assert_select "h1", text: "Matchups"
     assert_select "a[href*='side_a_player_ids'][href^='/prediction']", text: "Predict"
+  end
+
+  test "profiles and teams show goals for, against and clean sheets" do
+    Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    Game.create!(mode: "singles", side_a_score: 5, side_b_score: 8, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    get player_path(@cam)
+
+    assert_select "dt", text: "Goals for"
+    assert_select "dd", text: "13"
+    assert_select "dd", text: "8"
+    assert_select "dd", text: "+5"
+    assert_select "dt", text: "Clean sheets"
+    assert_select "dd", text: "1"
+
+    get player_path(@quinn)
+
+    assert_select "dd", text: "−5"
   end
 end

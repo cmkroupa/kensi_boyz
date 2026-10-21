@@ -1,7 +1,7 @@
 # KFL
 
 A foosball tracker for the house: 1v1 and 2v2 ladders, Elo ratings, bets and debts, head-to-head
-history, achievements and league records. Rails 8, SQLite, Hotwire and Tailwind. Deployed with Kamal.
+history and league records. Rails 8, SQLite, Hotwire and Tailwind. Deployed with Kamal.
 
 ## Run it
 
@@ -25,8 +25,8 @@ bundle exec brakeman
 
 ## How ratings work
 
-Chess-style Elo with a margin bonus; see the Formula button in the app for the live numbers. Ratings,
-badges and records are rebuilt from the full game history after every change, so fixing or deleting a
+Chess-style Elo with a margin bonus; see the Formula button in the app for the live numbers. Ratings
+and records are rebuilt from the full game history after every change, so fixing or deleting a
 game is always safe. Players who sit out for more than a week drift back toward 1000 (admins can switch
 this off from the leaderboard).
 

@@ -53,6 +53,10 @@ class Partnership
       .select { |run| run.first.won? }.map(&:size).max || 0
   end
 
+  def goals_for = results.sum(&:points)
+  def goals_against = results.sum(&:opponent_points)
+  def clean_sheets = results.count { |result| result.opponent_points.zero? }
+
   def games = results.size
   def wins = results.count(&:won?)
   def losses = games - wins

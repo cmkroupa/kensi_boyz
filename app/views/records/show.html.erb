@@ -20,17 +20,3 @@
     <% end %>
   </ul>
 <% end %>
-
-<% if @recent_achievements.any? %>
-  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Latest badges</h2>
-  <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-    <% @recent_achievements.each do |achievement| %>
-      <li>
-        <%= link_to game_path(achievement.game), class: "flex items-center justify-between gap-3 px-4 py-3 text-base hover:bg-blue-50" do %>
-          <span class="min-w-0 truncate"><span class="font-medium"><%= achievement.player.name %></span> <span class="text-slate-500">earned</span> <%= achievement.name %></span>
-          <span class="shrink-0 text-sm text-slate-400"><%= l(achievement.game.played_at, format: "%b %-d") %></span>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-<% end %>

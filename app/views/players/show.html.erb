@@ -20,6 +20,10 @@
     <% [
       [ "Record", "#{@player.wins(current_mode)}-#{@player.losses(current_mode)}" ],
       [ "Win rate", percent_text(@player.win_rate(current_mode)) ],
+      [ "Goals for", @player.goals_for(current_mode), "" ],
+      [ "Goals against", @player.goals_against(current_mode), "" ],
+      [ "Goal difference", goal_difference_text(@player.goals_for(current_mode), @player.goals_against(current_mode)), goal_difference_class(@player.goals_for(current_mode), @player.goals_against(current_mode)) ],
+      [ "Clean sheets", @player.clean_sheets(current_mode), "" ],
       [ "Streak", @player.current_streak(current_mode).label, streak_class(@player.current_streak(current_mode)) ],
       [ "Best win streak", "#{@player.longest_win_streak(current_mode)}W", "" ],
       [ "Net profit", money_delta_text(@bets.net_cents), money_class(@bets.net_cents) ]
@@ -59,33 +63,6 @@
         <%= render "players/record", label: label, name: name, detail: detail, game: game %>
       <% end %>
     </dl>
-  <% end %>
-  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Achievements<%= " · #{@achievements.size}" if @achievements.any? %></h2>
-  <% if @achievements.any? %>
-    <ul class="mt-2 grid grid-cols-2 gap-3">
-      <% @achievements.each do |achievement| %>
-        <li>
-          <%= link_to game_path(achievement.game), class: "block h-full rounded-xl border border-slate-200 bg-white px-3 py-3 hover:bg-blue-50" do %>
-            <span class="block font-semibold"><%= achievement.name %></span>
-            <span class="block text-sm text-slate-500"><%= achievement.description %></span>
-            <span class="mt-1 block text-xs text-slate-400"><%= l(achievement.game.played_at, format: "%b %-d") %><%= " · #{mode_label(achievement.scope)}" if achievement.mode_scoped? %></span>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p class="mt-2 text-base text-slate-500">None yet.</p>
-  <% end %>
-  <% locked = Achievement::CATALOG.except(*@achievements.map(&:key)) %>
-  <% if locked.any? %>
-    <details class="mt-3">
-      <summary class="cursor-pointer text-base text-slate-500">Not yet earned (<%= locked.size %>)</summary>
-      <ul class="mt-2 divide-y divide-slate-200 text-base">
-        <% locked.each_value do |badge| %>
-          <li class="flex justify-between gap-3 py-2"><span class="font-medium text-slate-600"><%= badge[:name] %></span><span class="text-right text-sm text-slate-400"><%= badge[:description] %></span></li>
-        <% end %>
-      </ul>
-    </details>
   <% end %>
   <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Head to head · <%= mode_label(current_mode) %></h2>
   <ul class="mt-2 divide-y divide-slate-200 text-base">

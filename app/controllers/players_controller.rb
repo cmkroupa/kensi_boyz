@@ -5,7 +5,6 @@ class PlayersController < ApplicationController
     @bets = Ledger.lines.find { |line| line.player == @player }
     @partnerships = Partnership.for(@player) if current_mode == "doubles"
     @rivalries = Rivalry.for(@player, current_mode)
-    @achievements = @player.achievements.includes(:game).order(:id)
     @nemesis = @player.nemesis(current_mode)
     @victim = @player.victim(current_mode)
     @upset = @player.biggest_upset(current_mode)

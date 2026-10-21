@@ -8,7 +8,6 @@ class Game < ApplicationRecord
   has_many :participations, dependent: :destroy
   has_many :players, through: :participations
   has_many :debts, dependent: :destroy
-  has_many :achievements, dependent: :destroy
   has_many :record_breaks, dependent: :destroy
 
   attribute :played_at, default: -> { Time.current }
@@ -37,10 +36,10 @@ class Game < ApplicationRecord
   def side_b_player_ids = Array(@side_b_player_ids).compact_blank.map(&:to_i)
 
   # The bet is entered in whole dollars and is what the underdog puts up.
-  # Everything computed by replaying the whole history: ratings, then badges and records.
+  # Everything computed by replaying the whole history: ratings, then league records.
   def self.rebuild_derived_data
     RatingReplay.call
-    AchievementReplay.call
+    RecordReplay.call
   end
 
   def bet_dollars = underdog_stake_cents / 100
