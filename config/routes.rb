@@ -17,7 +17,6 @@ Rails.application.routes.draw do
   resources :teams, only: :show
   resources :players, only: %i[ index show create update ]
   resource :head_to_head, only: :show
-  resource :records, only: :show
 
   root "leaderboards#show"
 end

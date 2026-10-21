@@ -23,6 +23,16 @@ class AccessTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
+  test "an unset passcode can't be matched by a blank submission" do
+    with_env("MEMBER_PASSCODE" => nil, "ADMIN_PASSCODE" => nil) do
+      post session_path, params: { passcode: "" }
+
+      assert_redirected_to new_session_path
+      get root_path
+      assert_redirected_to new_session_path
+    end
+  end
+
   test "the nav marks the current page" do
     sign_in
     get games_path
@@ -64,7 +74,7 @@ class AccessTest < ActionDispatch::IntegrationTest
 
     [ root_path(mode: "doubles"), games_path, game_path(Game.first), game_path(doubles), team_path("#{cam.id}-#{quinn.id}"), games_path(player_id: cam.id),
       player_path(cam), player_path(cam, mode: "doubles"),
-      players_path, players_path(mode: "doubles"), play_path, play_path(rematch: 1), root_path(view: "money"), debts_path, records_path, head_to_head_path,
+      players_path, players_path(mode: "doubles"), play_path, play_path(rematch: 1), root_path(view: "money"), debts_path, head_to_head_path,
       head_to_head_path(mode: "singles", side_a_player_ids: [ cam.id ], side_b_player_ids: [ quinn.id ]) ].each do |path|
       get path
       assert_response :success, path
@@ -136,4 +146,14 @@ class AccessTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_content
   end
+
+  private
+    # Swaps environment variables for the block, restoring them afterwards.
+    def with_env(vars)
+      saved = vars.keys.index_with { |key| ENV[key] }
+      vars.each { |key, value| ENV[key] = value }
+      yield
+    ensure
+      saved.each { |key, value| ENV[key] = value }
+    end
 end

@@ -18,7 +18,6 @@
   <% { "a" => "Team 1", "b" => "Team 2" }.each do |side, label| %>
     <fieldset>
       <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= label %></legend>
-      <p class="mt-0.5 text-sm text-slate-500">Pick 1 player for 1v1, or 2 for 2v2.</p>
       <%= render "shared/team_picker", side: side, label: label, players: players,
         selected_ids: game.public_send("side_#{side}_player_ids") %>
       <%= render "shared/score_field", form: form, field: "side_#{side}_score", label: label %>

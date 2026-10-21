@@ -9,8 +9,6 @@
 <p class="mt-1 text-base text-slate-500">
   <% if @view == "money" %>
     Net profit from bets, best first. Tap a player for their stats.
-  <% else %>
-    Players ranked by Elo rating. A <span class="font-semibold">?</span> means fewer than <%= Elo::UNSETTLED_GAMES %> games. Tap a name for their stats.
   <% end %>
 </p>
 

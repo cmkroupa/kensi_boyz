@@ -64,10 +64,17 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{games_path}']", count: 0
   end
 
-  test "the matchup form has its payout lines directly under the bet input" do
+  test "the matchup form has no bet input" do
     get head_to_head_path
 
-    assert_select "fieldset input[name='bet_dollars'] ~ * [data-game-form-target='terms'], fieldset [data-controller='amount'] + p[data-game-form-target='terms']"
+    assert_select "input[name='bet_dollars']", count: 0
+    assert_select "[data-game-form-target='terms']", count: 0
+  end
+
+  test "the play form has its payout lines directly under the bet input" do
+    get play_path
+
+    assert_select "fieldset [data-controller='amount'] + p[data-game-form-target='terms']"
   end
 
   test "a matchup shows the predicted score and the Elo change for either team winning" do
@@ -143,24 +150,6 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "h2", text: "Records set in this game"
     assert_select "li", text: /Biggest blowout/
-  end
-
-  test "the records page lists what has been set" do
-    get records_path
-    assert_select "body", text: /No records yet/
-
-    3.times { Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ]) }
-    get records_path
-
-    assert_select "body", text: /Longest win streak \(1v1\)/
-    assert_select "body", text: /3 wins/
-    assert_select "a", text: "← Leaderboard"
-  end
-
-  test "the leaderboard links to the records page" do
-    get root_path
-
-    assert_select "a[href='#{records_path}']"
   end
 
   test "the nav has Matchups and History tabs, and no Predict" do

@@ -1,19 +1,22 @@
 <% content_for :title, "Players · KFL" %>
+
 <div class="flex items-center justify-between">
   <h1 class="text-2xl font-semibold tracking-tight">Players</h1>
   <%= render "shared/mode_toggle", mode: current_mode, path: { name: :players_path, args: [] } %>
 </div>
-<p class="mt-1 text-base text-slate-500">Everyone's stats at a glance, best rating first. Tap a player for their full profile.</p>
 
 <div class="mt-4 space-y-3">
   <% @overviews.each do |overview| %>
     <%= link_to player_path(overview.player, mode: current_mode), class: "block rounded-2xl border border-slate-200 bg-white p-4 hover:bg-blue-50" do %>
       <div class="flex items-baseline justify-between gap-3">
         <span class="min-w-0 truncate text-xl font-semibold">
-          <% if overview.ranked? %><span class="text-base font-normal text-slate-400">#<%= overview.rank %></span> <% end %><%= overview.player.name %>
+          <% if overview.ranked? %>
+            <span class="text-base font-normal text-slate-400">#<%= overview.rank %></span>
+          <% end %><%= overview.player.name %>
         </span>
+
         <% if overview.ranked? %>
-          <span class="text-2xl font-bold tabular-nums"><%= rating_text(overview.rating) %><% if overview.provisional? %><span class="text-slate-400" title="Fewer than <%= Elo::UNSETTLED_GAMES %> games">?</span><% end %></span>
+          <span class="text-2xl font-bold tabular-nums"><%= rating_text(overview.rating) %><% if overview.provisional? %>          <span class="text-slate-400" title="Fewer than <%= Elo::UNSETTLED_GAMES %> games">?          </span><% end %></span>
         <% end %>
       </div>
 
@@ -32,13 +35,22 @@
           ].each do |label, value, color| %>
             <div>
               <dt class="text-xs text-slate-500"><%= label %></dt>
-              <dd class="text-lg font-semibold tabular-nums <%= color %>"><%= value %></dd>
+
+              <dd class="text-lg font-semibold tabular-nums <%= color %>">
+                <%= value %>
+              </dd>
             </div>
           <% end %>
         </dl>
-        <% if overview.idle_days %><p class="mt-3 text-sm text-slate-400">Idle <%= overview.idle_days %> days</p><% end %>
+        <% if overview.idle_days %>
+          <p class="mt-3 text-sm text-slate-400">
+            Idle <%= overview.idle_days %> days
+          </p>
+        <% end %>
       <% else %>
-        <p class="mt-1 text-base text-slate-400">No <%= mode_label(current_mode) %> games yet.</p>
+        <p class="mt-1 text-base text-slate-400">
+          No <%= mode_label(current_mode) %> games yet.
+        </p>
       <% end %>
     <% end %>
   <% end %>
