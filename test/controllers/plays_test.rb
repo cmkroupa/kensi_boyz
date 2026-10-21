@@ -64,20 +64,20 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{games_path}']", count: 0
   end
 
-  test "predict shows what each side risks and wins when there is a bet" do
-    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ], bet_dollars: 5)
+  test "a bet on a matchup shows what each side risks and wins" do
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ], bet_dollars: 5)
 
     assert_select "body", text: /risks \$5 to win \$5/
   end
 
-  test "predict without a bet shows no payouts" do
-    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+  test "a matchup without a bet shows no payouts" do
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
 
     assert_select "body", text: /risks/, count: 0
   end
 
-  test "predict shows the Elo change for either team winning" do
-    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+  test "a matchup shows the predicted score and the Elo change for either team winning" do
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
 
     assert_select "body", text: /Elo at 8–7/
     assert_select "body", text: /If Cam win/
@@ -151,16 +151,13 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "body", text: /haven't played each other yet/
   end
 
-  test "head to head is linked from games, profiles and predictions" do
+  test "a matchup is linked from games and profiles" do
     log_game
     get game_path(Game.last)
     assert_select "a", text: "Matchup"
 
     get player_path(@cam)
     assert_select "a", text: "vs Quinn"
-
-    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
-    assert_select "a[href*='head_to_head']", text: "Matchups"
   end
 
   test "a record shows on the game that set it" do
@@ -210,19 +207,18 @@ class PlaysTest < ActionDispatch::IntegrationTest
     ENV.delete("GITHUB_BACKUP_TOKEN")
   end
 
-  test "Predict and Matchups are sub-tabs of Versus and keep the teams picked" do
-    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+  test "the nav has Matchups and History tabs, and no Predict" do
+    get head_to_head_path
 
-    assert_select "nav a[aria-current=page]", text: "Versus"
-    assert_select "a[aria-current=page]", text: "Predict"
-    assert_select "a[href*='side_a_player_ids'][href*='head_to_head']", text: "Matchups"
+    assert_select "nav a[aria-current=page]", text: "Matchups"
+    assert_select "nav a", text: "Predict", count: 0
+    assert_select "nav a", text: "Versus", count: 0
+    assert_select "nav a", text: "Games", count: 0
 
-    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    get games_path
 
-    assert_select "nav a[aria-current=page]", text: "Versus"
-    assert_select "a[aria-current=page]", text: "Matchups"
-    assert_select "h1", text: "Matchups"
-    assert_select "a[href*='side_a_player_ids'][href^='/prediction']", text: "Predict"
+    assert_select "nav a[aria-current=page]", text: "History"
+    assert_select "h1", text: "History"
   end
 
   test "profiles and teams show goals for, against and clean sheets" do
@@ -240,5 +236,23 @@ class PlaysTest < ActionDispatch::IntegrationTest
     get player_path(@quinn)
 
     assert_select "dd", text: "−5"
+  end
+
+  test "the players tab gives an overview of everyone, best rating first" do
+    3.times { Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ]) }
+    get players_path
+
+    assert_select "nav a[aria-current=page]", text: "Players"
+    assert_select "h1", text: "Players"
+    assert_select "dt", text: "Goals for", count: 2
+    assert_select "dt", text: "Clean sheets", count: 2
+    names = css_select("main a[href^='/players/'] span.truncate").map { |node| node.text.gsub(/\s+/, " ").strip }
+    assert_equal [ "#1 Cam", "#2 Quinn" ], names
+  end
+
+  test "players with no games in a mode show a placeholder" do
+    get players_path(mode: "doubles")
+
+    assert_select "body", text: /No 2v2 games yet/
   end
 end

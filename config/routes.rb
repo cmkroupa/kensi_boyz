@@ -13,8 +13,7 @@ Rails.application.routes.draw do
   resources :debt_settlements, only: :create
   resources :games, only: %i[ index show create edit update destroy ]
   resources :teams, only: :show
-  resources :players, only: :show
-  resource :prediction, only: :show
+  resources :players, only: %i[ index show ]
   resource :head_to_head, only: :show
   resource :records, only: :show
 

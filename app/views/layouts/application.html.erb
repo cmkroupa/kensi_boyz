@@ -32,8 +32,8 @@
           </div>
           <%= button_to "Log out", session_path, method: :delete, class: "text-base text-slate-500 hover:text-slate-900" %>
         </div>
-        <nav class="mx-auto mt-2 grid max-w-3xl grid-cols-5 px-4 text-center text-sm sm:text-base">
-          <% { leaderboard: [ safe_join([ tag.span("Ranks", class: "sm:hidden"), tag.span("Leaderboard", class: "hidden sm:inline") ]), root_path ], play: [ "Play", play_path ], versus: [ "Versus", prediction_path ], games: [ "Games", games_path ], debts: [ "Debts", debts_path ] }.each do |section, (label, path)| %>
+        <nav class="mx-auto mt-2 grid max-w-3xl grid-cols-6 px-2 text-center text-xs sm:px-4 sm:text-base">
+          <% { leaderboard: [ safe_join([ tag.span("Ranks", class: "sm:hidden"), tag.span("Leaderboard", class: "hidden sm:inline") ]), root_path ], players: [ "Players", players_path ], play: [ "Play", play_path ], matchups: [ "Matchups", head_to_head_path ], history: [ "History", games_path ], debts: [ "Debts", debts_path ] }.each do |section, (label, path)| %>
             <%= link_to label, path, "aria-current": (nav_section == section ? "page" : nil),
               class: [ "border-b-2 py-3 font-medium", nav_section == section ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:text-slate-900" ] %>
           <% end %>

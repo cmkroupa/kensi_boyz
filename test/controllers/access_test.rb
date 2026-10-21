@@ -27,7 +27,7 @@ class AccessTest < ActionDispatch::IntegrationTest
     sign_in
     get games_path
 
-    assert_select "nav a[aria-current=page]", text: "Games"
+    assert_select "nav a[aria-current=page]", text: "History"
     assert_select "nav a[aria-current=page]", count: 1
   end
 
@@ -64,8 +64,8 @@ class AccessTest < ActionDispatch::IntegrationTest
 
     [ root_path(mode: "doubles"), games_path, game_path(Game.first), game_path(doubles), team_path("#{cam.id}-#{quinn.id}"), games_path(player_id: cam.id),
       player_path(cam), player_path(cam, mode: "doubles"),
-      prediction_path, play_path, play_path(rematch: 1), root_path(view: "money"), debts_path, records_path, head_to_head_path,
-      prediction_path(mode: "singles", side_a_player_ids: [ cam.id ], side_b_player_ids: [ quinn.id ]) ].each do |path|
+      players_path, players_path(mode: "doubles"), play_path, play_path(rematch: 1), root_path(view: "money"), debts_path, records_path, head_to_head_path,
+      head_to_head_path(mode: "singles", side_a_player_ids: [ cam.id ], side_b_player_ids: [ quinn.id ]) ].each do |path|
       get path
       assert_response :success, path
     end

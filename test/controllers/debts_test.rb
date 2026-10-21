@@ -68,7 +68,7 @@ class DebtsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{root_path(mode: "singles")}']", text: /Leaderboard/
 
     get game_path(@game)
-    assert_select "a[href='#{games_path}']", text: /Games/
+    assert_select "a[href='#{games_path}']", text: /History/
 
     get games_path(player_id: @cam.id)
     assert_select "a[href='#{player_path(@cam, mode: "singles")}']", text: /Cam/

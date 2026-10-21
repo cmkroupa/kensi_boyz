@@ -1,0 +1,44 @@
+<% content_for :title, "Players · KFL" %>
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-semibold tracking-tight">Players</h1>
+  <%= render "shared/mode_toggle", mode: current_mode, path: { name: :players_path, args: [] } %>
+</div>
+
+<div class="mt-4 space-y-3">
+  <% @overviews.each do |overview| %>
+    <%= link_to player_path(overview.player, mode: current_mode), class: "block rounded-2xl border border-slate-200 bg-white p-4 hover:bg-blue-50" do %>
+      <div class="flex items-baseline justify-between gap-3">
+        <span class="min-w-0 truncate text-xl font-semibold">
+          <% if overview.ranked? %><span class="text-base font-normal text-slate-400">#<%= overview.rank %></span> <% end %><%= overview.player.name %>
+        </span>
+        <% if overview.ranked? %>
+          <span class="text-2xl font-bold tabular-nums"><%= rating_text(overview.rating) %><% if overview.provisional? %><span class="text-slate-400" title="Fewer than <%= Elo::UNSETTLED_GAMES %> games">?</span><% end %></span>
+        <% end %>
+      </div>
+
+      <% if overview.ranked? %>
+        <dl class="mt-3 grid grid-cols-3 gap-x-3 gap-y-3 text-base">
+          <% [
+            [ "Record", "#{overview.wins}-#{overview.losses}", "" ],
+            [ "Win rate", percent_text(overview.win_rate), "" ],
+            [ "Streak", overview.current_streak.label, streak_class(overview.current_streak) ],
+            [ "Goals for", overview.goals_for, "" ],
+            [ "Goals against", overview.goals_against, "" ],
+            [ "Goal diff", goal_difference_text(overview.goals_for, overview.goals_against), goal_difference_class(overview.goals_for, overview.goals_against) ],
+            [ "Clean sheets", overview.clean_sheets, "" ],
+            [ "Best streak", "#{overview.best_win_streak}W", "" ],
+            [ "Net profit", money_delta_text(overview.net_cents), money_class(overview.net_cents) ]
+          ].each do |label, value, color| %>
+            <div>
+              <dt class="text-xs text-slate-500"><%= label %></dt>
+              <dd class="text-lg font-semibold tabular-nums <%= color %>"><%= value %></dd>
+            </div>
+          <% end %>
+        </dl>
+        <% if overview.idle_days %><p class="mt-3 text-sm text-slate-400">Idle <%= overview.idle_days %> days</p><% end %>
+      <% else %>
+        <p class="mt-1 text-base text-slate-400">No <%= mode_label(current_mode) %> games yet.</p>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

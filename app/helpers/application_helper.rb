@@ -5,11 +5,13 @@ module ApplicationHelper
 
   # Which top-bar item the current page belongs to; player and team pages sit under the leaderboard.
   def nav_section
+    return :players if controller_name == "players" && action_name == "index"
+
     case controller_name
-    when "games" then :games
+    when "games" then :history
     when "plays" then :play
     when "debts", "payments", "debt_settlements" then :debts
-    when "predictions", "head_to_heads" then :versus
+    when "head_to_heads" then :matchups
     else :leaderboard
     end
   end
