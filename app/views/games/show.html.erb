@@ -43,6 +43,8 @@
   </div>
 <% end %>
 
+<div class="mt-4"><%= render "shared/formula", label: "How this was calculated", game: @game %></div>
+
 <p class="mt-4 text-base text-slate-500">
   Before the game, <%= names(@game.participants_on(@game.winner_side)) %> had a
   <span class="font-semibold text-slate-900"><%= percent_text(@game.chance_for(@game.winner_side)) %></span> chance to win.

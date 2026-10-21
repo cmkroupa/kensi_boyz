@@ -1,0 +1,74 @@
+<%# locals: (label: "Formula", game: nil) %>
+<%# A pop-up explaining the rating formula with the live constants; on a game page it also walks through that game. %>
+<% underdog_rating = 1000 + (Elo::SCALE * Math.log10(3)).round %>
+<div data-controller="dialog" class="inline-block">
+  <button type="button" data-action="dialog#open"
+    class="rounded-full bg-slate-200 px-4 py-2 text-base font-medium text-slate-700 hover:bg-slate-300"><%= label %></button>
+
+  <dialog data-dialog-target="dialog" data-action="click->dialog#backdrop"
+    class="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-3xl bg-white p-5 text-left shadow-xl backdrop:bg-slate-900/30">
+    <h2 class="text-xl font-semibold tracking-tight">How ratings work</h2>
+
+    <% if game %>
+      <% breakdown = game.elo_breakdown %>
+      <section class="mt-4 rounded-2xl bg-blue-50 p-4 text-base">
+        <h3 class="font-semibold">This game</h3>
+        <dl class="mt-2 space-y-1">
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Winners' rating → losers'</dt><dd class="tabular-nums"><%= rating_text(breakdown.winner_rating) %> → <%= rating_text(breakdown.loser_rating) %></dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Winners' chance</dt><dd class="tabular-nums"><%= percent_text(breakdown.chance) %></dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Margin <%= game.score_for(game.winner_side) %>–<%= game.score_for(game.loser_side) %> → multiplier</dt><dd class="tabular-nums">×<%= number_with_precision(breakdown.margin_multiplier, precision: 2) %></dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500"><%= Elo::K.round %> × <%= number_with_precision(breakdown.margin_multiplier, precision: 2) %> × <%= number_with_precision(1 - breakdown.chance, precision: 2) %></dt><dd class="font-semibold tabular-nums"><%= number_with_precision(breakdown.transfer, precision: 1) %> points</dd></div>
+        </dl>
+        <% boosted = game.participations.select { |participation| (participation.delta.abs - breakdown.transfer).abs > 0.05 } %>
+        <% if boosted.any? %>
+          <p class="mt-2 text-sm text-slate-500">New-player boost (×<%= Elo::PROVISIONAL_BOOST %>) applied to <%= boosted.map { |participation| participation.player.name }.to_sentence %>.</p>
+        <% end %>
+      </section>
+    <% end %>
+
+    <div class="mt-4 space-y-5 text-base leading-relaxed text-slate-700">
+      <section>
+        <h3 class="font-semibold text-slate-900">1. Win chance</h3>
+        <p class="mt-1">Every rating is a prediction. Your chance to win is <span class="font-mono text-sm">1 ÷ (1 + 10^((their rating − yours) ÷ <%= Elo::SCALE.round %>))</span>. Equal ratings are 50/50, and a 100-point edge is about 64%.</p>
+        <p class="mt-1 flex flex-wrap gap-x-4 text-sm tabular-nums text-slate-500">
+          <% [ 0, 100, 200, 400 ].each do |gap| %><span class="whitespace-nowrap">+<%= gap %> → <%= percent_text(Elo.expected(1000 + gap, 1000)) %></span><% end %>
+        </p>
+      </section>
+
+      <section>
+        <h3 class="font-semibold text-slate-900">2. Points on the line</h3>
+        <p class="mt-1">The winner takes <span class="font-mono text-sm"><%= Elo::K.round %> × margin multiplier × (1 − win chance)</span> from the loser, and the loser loses the same. Beating someone better is a big swing and beating someone worse is a small one. <strong>A winner never loses rating</strong> (the minimum gain is <%= Elo::MIN_TRANSFER.round %>).</p>
+      </section>
+
+      <section>
+        <h3 class="font-semibold text-slate-900">3. The margin counts</h3>
+        <p class="mt-1">Multiplier = <span class="font-mono text-sm">ln(point gap + 1)</span>, so bigger wins pay more with diminishing returns. It's the raw gap, so 8-4 is worth more than 4-2.</p>
+        <p class="mt-1 flex flex-wrap gap-x-4 text-sm tabular-nums text-slate-500">
+          <% (1..8).each do |gap| %><span class="whitespace-nowrap">gap <%= gap %> → ×<%= number_with_precision(Math.log(gap + 1), precision: 2) %></span><% end %>
+        </p>
+        <p class="mt-1">It's scaled slightly by the rating gap, so favourites running up the score can't farm rating.</p>
+      </section>
+
+      <section>
+        <h3 class="font-semibold text-slate-900">Example: an 8-4 win</h3>
+        <ul class="mt-1 space-y-1 tabular-nums">
+          <li class="flex justify-between"><span>Equal players</span><span class="font-semibold">+<%= number_with_precision(Elo.transfer(winner_rating: 1000, loser_rating: 1000, winner_points: 8, loser_points: 4), precision: 1) %></span></li>
+          <li class="flex justify-between"><span>Underdog (25% chance) wins</span><span class="font-semibold">+<%= number_with_precision(Elo.transfer(winner_rating: 1000, loser_rating: underdog_rating, winner_points: 8, loser_points: 4), precision: 1) %></span></li>
+          <li class="flex justify-between"><span>Favourite (75% chance) wins</span><span class="font-semibold">+<%= number_with_precision(Elo.transfer(winner_rating: underdog_rating, loser_rating: 1000, winner_points: 8, loser_points: 4), precision: 1) %></span></li>
+        </ul>
+      </section>
+
+      <section>
+        <h3 class="font-semibold text-slate-900">Also</h3>
+        <ul class="mt-1 list-disc space-y-1 pl-5">
+          <li>Everyone starts at <%= Elo::BASE_RATING.round %>, and 1v1 and 2v2 are rated separately.</li>
+          <li>A player's first <%= Elo::PROVISIONAL_GAMES %> games in a mode move <%= Elo::PROVISIONAL_BOOST %>× as much, and a <span class="text-slate-400">?</span> shows until <%= Elo::UNSETTLED_GAMES %> games.</li>
+          <li>In 2v2 a team's rating is its two players' average, and each player gets the full change.</li>
+          <li>Bet odds come from the same win chance.</li>
+        </ul>
+      </section>
+    </div>
+
+    <button type="button" data-action="dialog#close" class="mt-5 w-full rounded-xl bg-blue-600 py-4 font-medium text-white">Got it</button>
+  </dialog>
+</div>

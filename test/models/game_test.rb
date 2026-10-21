@@ -102,4 +102,13 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 1.0, rivalry.win_rate
     assert_equal 0, Rivalry.new(@cam, @quinn, mode: "doubles").games
   end
+
+  test "the Elo breakdown matches what the winners gained" do
+    game = log("singles", [ @cam ], [ @quinn ], 8, 4)
+    breakdown = game.elo_breakdown
+
+    assert_in_delta 19.31, breakdown.transfer, 0.01
+    assert_in_delta 0.5, breakdown.chance
+    assert_in_delta breakdown.transfer * Elo::PROVISIONAL_BOOST, game.participations.find { |p| p.player == @cam }.delta, 0.01
+  end
 end

@@ -68,6 +68,18 @@ class Game < ApplicationRecord
     Elo.expected(average_rating_before(side), average_rating_before(other))
   end
 
+  Breakdown = Struct.new(:winner_rating, :loser_rating, :chance, :margin_multiplier, :transfer)
+
+  # The numbers behind this game's rating change (before any new-player boost).
+  def elo_breakdown
+    winner_rating = average_rating_before(winner_side)
+    loser_rating = average_rating_before(loser_side)
+    Breakdown.new(winner_rating, loser_rating, Elo.expected(winner_rating, loser_rating),
+      Elo.margin_multiplier(winner_rating - loser_rating, margin),
+      Elo.transfer(winner_rating: winner_rating, loser_rating: loser_rating,
+        winner_points: score_for(winner_side), loser_points: score_for(loser_side)))
+  end
+
   def participants_on(side)
     participations.select { |participation| participation.side == side }
   end

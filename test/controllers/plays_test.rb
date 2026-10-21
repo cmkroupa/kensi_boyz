@@ -83,4 +83,16 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "body", text: /If Cam win/
     assert_select "body", text: /If Quinn win/
   end
+
+  test "the leaderboard and game page explain the formula" do
+    log_game
+    get root_path
+
+    assert_select "dialog", text: /How ratings work/
+    assert_select "dialog", text: /A winner never loses rating/
+
+    get game_path(Game.last)
+
+    assert_select "dialog h3", text: "This game"
+  end
 end

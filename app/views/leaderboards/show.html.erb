@@ -6,10 +6,13 @@
   <% end %>
 </div>
 
-<div class="mt-3 inline-flex rounded-full bg-slate-200 p-1 text-base">
-  <% { "Ratings" => root_path(mode: current_mode), "Money" => root_path(view: "money") }.each do |label, path| %>
-    <%= link_to label, path, class: [ "rounded-full px-4 py-1.5 font-medium", (label == "Money") == @lines.present? ? "bg-white shadow-sm" : "text-slate-500" ] %>
-  <% end %>
+<div class="mt-3 flex items-center justify-between gap-3">
+  <div class="inline-flex rounded-full bg-slate-200 p-1 text-base">
+    <% { "Ratings" => root_path(mode: current_mode), "Money" => root_path(view: "money") }.each do |label, path| %>
+      <%= link_to label, path, class: [ "rounded-full px-4 py-1.5 font-medium", (label == "Money") == @lines.present? ? "bg-white shadow-sm" : "text-slate-500" ] %>
+    <% end %>
+  </div>
+  <%= render "shared/formula" %>
 </div>
 
 <%= render(@lines ? "leaderboards/money" : "leaderboards/ratings") %>
