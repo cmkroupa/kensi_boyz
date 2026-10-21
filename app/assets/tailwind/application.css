@@ -5,6 +5,12 @@
   /* Reserve scrollbar space so the centered layout never shifts between short and long pages. */
   html { scrollbar-gutter: stable; }
 
+  /* Rapid taps on the keypads would otherwise trigger double-tap zoom on phones. */
+  button, a, label, summary { touch-action: manipulation; }
+
+  /* Keypad digits shouldn't select text or flash a highlight when mashed. */
+  button { -webkit-tap-highlight-color: transparent; user-select: none; }
+
   @media (min-width: 1024px) {
     html { font-size: 18px; }
   }
