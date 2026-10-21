@@ -16,7 +16,7 @@
 </ol>
 
 <% if @top_duos.present? %>
-  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Top 5 duos</h2>
+  <%= render "shared/section_heading", title: "Top 5 duos", subtitle: "The best 2v2 pairs by win rate. Tap a pair for their stats." %>
   <ol class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
     <% @top_duos.each_with_index do |pair, index| %>
       <li>
@@ -31,9 +31,9 @@
   </ol>
 <% end %>
 
-<div class="mt-8 flex items-baseline justify-between">
-  <h2 class="text-base font-semibold uppercase tracking-wide text-slate-500">Recent games</h2>
-  <%= link_to "View all →", games_path, class: "text-base text-blue-600 hover:underline" %>
+<div class="mt-8 flex items-end justify-between gap-3">
+  <%= render "shared/section_heading", title: "Recent games", subtitle: "The latest 8, winner on the left.", top: "" %>
+  <%= link_to "View all →", games_path, class: "shrink-0 text-base text-blue-600 hover:underline" %>
 </div>
 <% if @recent_games.empty? %>
   <p class="mt-3 text-base text-slate-500">No games yet. Log the first one.</p>

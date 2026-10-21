@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   resource :play, only: :show
   resource :decay, only: %i[ create destroy ]
   resource :admin, only: :show
-  resource :recalculation, only: :create
   resource :backup, only: :create
   resources :debts, only: :index do
     resource :payment, only: %i[ create destroy ], module: :debts

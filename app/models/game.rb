@@ -40,6 +40,7 @@ class Game < ApplicationRecord
   def self.rebuild_derived_data
     RatingReplay.call
     RecordReplay.call
+    FormulaVersion.mark_applied
   end
 
   def bet_dollars = underdog_stake_cents / 100

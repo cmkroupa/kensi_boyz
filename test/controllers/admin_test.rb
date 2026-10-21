@@ -36,7 +36,7 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: "Admin"
     assert_select "header a[aria-current=page]", text: "Admin"
-    %w[ Settings Predictor\ accuracy Backups Players Tools ].each { |section| assert_select "h2", text: section }
+    %w[ Settings Predictor\ accuracy Backups Players ].each { |section| assert_select "h2", text: section }
   end
 
   test "only admins can switch decay, and it takes effect" do
@@ -97,13 +97,18 @@ class AdminTest < ActionDispatch::IntegrationTest
     ENV.delete("GITHUB_BACKUP_TOKEN")
   end
 
-  test "members can't start a backup or recalculate" do
+  test "members can't start a backup" do
     sign_in "7742"
 
     assert_no_enqueued_jobs { post backup_path }
-    post recalculation_path
-
     assert_redirected_to root_path
+  end
+
+  test "there is no manual recalculate, since it happens automatically" do
+    sign_in "2477"
+    get admin_path
+
+    assert_select "button", text: /Recalculate/, count: 0
   end
 
   test "admins can add and rename players" do
@@ -137,15 +142,5 @@ class AdminTest < ActionDispatch::IntegrationTest
     get play_path
 
     assert_select "input[data-name='Nash']", minimum: 2
-  end
-
-  test "recalculating rebuilds ratings and records" do
-    log_game
-    @cam.update_columns(singles_rating: 1500)
-    sign_in "2477"
-    post recalculation_path
-
-    assert_redirected_to admin_path
-    assert_operator @cam.reload.singles_rating, :<, 1100
   end
 end

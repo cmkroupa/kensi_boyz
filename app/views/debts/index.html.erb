@@ -1,16 +1,17 @@
 <% content_for :title, "Debts · KFL" %>
 <h1 class="text-2xl font-semibold tracking-tight">Debts</h1>
+<p class="mt-1 text-base text-slate-500">Money owed from bets, one entry per bet. Mark it paid once the cash changes hands.</p>
 
-<div class="mt-3 flex flex-wrap gap-2 text-base">
+<p class="mt-4 text-sm text-slate-500">Show debts involving</p>
+<div class="mt-1 flex flex-wrap gap-2 text-base">
   <% [ [ nil, "Everyone" ], *@players.map { |player| [ player.id, player.name ] } ].each do |id, label| %>
     <%= link_to label, debts_path(player_id: id),
       class: [ "rounded-full px-3 py-1.5", id == @player&.id ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-600" ] %>
   <% end %>
 </div>
 
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">
-  Unpaid<%= " · #{money_text(@pairs.sum { |_, _, owed| owed.sum(&:cents) })}" if @pairs.any? %>
-</h2>
+<%= render "shared/section_heading", title: "Unpaid",
+  subtitle: (@pairs.any? ? "#{money_text(@pairs.sum { |_, _, owed| owed.sum(&:cents) })} outstanding, grouped by who owes who. Tap “N bets” to see each one." : "Money still owed from bets.") %>
 <% if @pairs.empty? %>
   <p class="mt-2 text-base text-slate-500">Nobody owes anything.</p>
 <% else %>
@@ -48,7 +49,7 @@
 <% end %>
 
 <% if @paid.any? %>
-  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Paid</h2>
+  <%= render "shared/section_heading", title: "Paid", subtitle: "Recently settled bets. Use Mark unpaid if one was recorded by mistake." %>
   <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
     <% @paid.each do |debt| %>
       <li class="flex items-center justify-between gap-3 px-4 py-3 text-base">

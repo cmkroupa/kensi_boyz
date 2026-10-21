@@ -1,0 +1,6 @@
+<%# locals: (title:, subtitle: nil, top: "mt-8") %>
+<%# Every block on a page gets a title and a line saying what it is. %>
+<div class="<%= top %>">
+  <h2 class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= title %></h2>
+  <% if subtitle %><p class="mt-0.5 text-sm text-slate-500"><%= subtitle %></p><% end %>
+</div>

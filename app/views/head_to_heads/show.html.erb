@@ -15,6 +15,7 @@
   <% { "a" => [ "Side 1", @side_a_ids ], "b" => [ "Side 2", @side_b_ids ] }.each do |side, (label, ids)| %>
     <fieldset>
       <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= label %></legend>
+      <p class="mt-0.5 text-sm text-slate-500">Pick 1 player for 1v1, or 2 for 2v2.</p>
       <%= render "shared/team_picker", side: side, label: label, players: @players, selected_ids: ids, name_prefix: "", name_suffix: "" %>
     </fieldset>
   <% end %>
@@ -23,6 +24,7 @@
     <legend class="text-base font-semibold uppercase tracking-wide text-slate-500">
       Bet <span class="font-normal normal-case tracking-normal text-slate-400">· optional</span>
     </legend>
+    <p class="mt-0.5 text-sm text-slate-500">Optional. The underdog puts this up and the favourite risks more, so it's a fair bet. Payouts show below.</p>
     <%= render "shared/amount_field", form: form, field: :bet_dollars, value: params[:bet_dollars].to_i.clamp(0, 999) %>
     <p data-game-form-target="terms" class="mt-3 min-h-5 whitespace-pre-line text-base text-slate-700"></p>
   </fieldset>

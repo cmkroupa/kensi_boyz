@@ -73,7 +73,9 @@ class PlaysTest < ActionDispatch::IntegrationTest
   test "a matchup shows the predicted score and the Elo change for either team winning" do
     get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
 
-    assert_select "body", text: /Elo at 8–7/
+    assert_select "h2", text: "Rating change"
+    assert_select "h2", text: "Prediction"
+    assert_select "body", text: /8–7/
     assert_select "body", text: /If Cam win/
     assert_select "body", text: /If Quinn win/
   end

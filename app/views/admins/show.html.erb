@@ -1,7 +1,8 @@
 <% content_for :title, "Admin · KFL" %>
 <h1 class="text-2xl font-semibold tracking-tight">Admin</h1>
+<p class="mt-1 text-base text-slate-500">Switches, health checks and upkeep for the league. Only admins can see this page.</p>
 
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Settings</h2>
+<%= render "shared/section_heading", title: "Settings", subtitle: "Switches that change how the whole league is scored." %>
 <div class="mt-2 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base">
   <span class="min-w-0">
     <span class="block font-medium">Rating decay <span class="font-normal text-slate-500">· <%= @decay ? "on" : "off" %></span></span>
@@ -15,7 +16,12 @@
   <% end %>
 </div>
 
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Predictor accuracy</h2>
+<div class="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base">
+  <span class="block font-medium">Ratings formula <span class="font-normal text-slate-500">· version <%= FormulaVersion.current %></span></span>
+  <span class="block text-sm text-slate-500">Ratings and records rebuild on their own after every game and whenever the formula changes, so there's nothing to recalculate by hand.</span>
+</div>
+
+<%= render "shared/section_heading", title: "Predictor accuracy", subtitle: "How often the pre-game win chance picked the winner, checked against every game played." %>
 <% if @accuracy.games.zero? %>
   <p class="mt-2 text-base text-slate-500">No games yet.</p>
 <% else %>
@@ -46,7 +52,8 @@
     </dl>
 
     <% if @accuracy.calibration.any? %>
-      <h3 class="mt-5 text-sm font-semibold uppercase tracking-wide text-slate-500">When it said…</h3>
+      <h3 class="mt-5 text-sm font-semibold uppercase tracking-wide text-slate-500">Calibration</h3>
+      <p class="text-sm text-slate-500">When the model gave the favourite this chance, how often did they really win?</p>
       <ul class="mt-1 divide-y divide-slate-100 text-base">
         <% @accuracy.calibration.each do |bucket| %>
           <li class="flex items-baseline justify-between gap-3 py-2">
@@ -65,7 +72,7 @@
   </div>
 <% end %>
 
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Backups</h2>
+<%= render "shared/section_heading", title: "Backups", subtitle: "A copy of the database is pushed to GitHub every night, and the last 30 days are kept." %>
 <div class="mt-2 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base">
   <% if DatabaseBackup.configured? %>
     <span class="min-w-0">
@@ -84,7 +91,7 @@
   <% end %>
 </div>
 
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Players</h2>
+<%= render "shared/section_heading", title: "Players", subtitle: "Rename someone or add a new player. Their games and stats follow the name." %>
 <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
   <% @players.each do |player| %>
     <li class="px-4 py-3">
@@ -103,13 +110,3 @@
     <% end %>
   </li>
 </ul>
-
-<h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Tools</h2>
-<div class="mt-2 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base">
-  <span class="min-w-0">
-    <span class="block font-medium">Recalculate everything</span>
-    <span class="block text-sm text-slate-500">Rebuilds ratings and league records from every game.</span>
-  </span>
-  <%= button_to "Recalculate", recalculation_path, class: "shrink-0 whitespace-nowrap rounded-full bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300",
-    form: { data: { turbo_confirm: "Rebuild all ratings and records?" } } %>
-</div>

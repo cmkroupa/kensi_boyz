@@ -3,13 +3,14 @@
 <h1 class="text-2xl font-semibold tracking-tight">
   <%= @player ? "#{@player.name}’s games" : "History" %>
 </h1>
+<p class="mt-1 text-base text-slate-500">Every game, newest first, winner on the left. Filter by game type, or show only games with a bet.</p>
 
 <div class="mt-3 flex gap-2 text-base">
   <% { nil => "All", "singles" => "1v1", "doubles" => "2v2" }.each do |mode, label| %>
     <%= link_to label, games_path(player_id: @player&.id, mode: mode, bets: @bets_only || nil),
       class: [ "rounded-full px-3 py-1.5", mode == @mode ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-600" ] %>
   <% end %>
-  <%= link_to "$ Bets", games_path(player_id: @player&.id, mode: @mode, bets: @bets_only ? nil : 1),
+  <%= link_to "Bets only", games_path(player_id: @player&.id, mode: @mode, bets: @bets_only ? nil : 1),
     class: [ "rounded-full px-3 py-1.5", @bets_only ? "bg-green-600 text-white" : "bg-slate-200 text-slate-600" ] %>
 </div>
 

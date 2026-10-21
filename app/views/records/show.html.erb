@@ -1,6 +1,7 @@
 <% content_for :title, "Records · KFL" %>
 <%= render "shared/back_link", label: "Leaderboard", path: root_path %>
 <h1 class="text-2xl font-semibold tracking-tight">League records</h1>
+<p class="mt-1 text-base text-slate-500">The best streaks, blowouts and upsets in league history, and who holds them. Tap one to open the game.</p>
 
 <% if @records.empty? %>
   <p class="mt-4 text-base text-slate-500">No records yet. They show up once someone puts together a real streak or a big result.</p>
