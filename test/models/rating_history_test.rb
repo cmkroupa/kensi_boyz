@@ -10,7 +10,7 @@ class RatingHistoryTest < ActiveSupport::TestCase
   end
 
   test "a player's line starts at 1000 a day before their first game and has a point per game" do
-    line = RatingHistory.for_player(@cam, "singles").first
+    line = RatingHistory.for_player(@cam.reload, "singles").first
 
     assert_equal 3, line.points.size
     assert_equal line.points.second.first - 1.day.to_f, line.points.first.first

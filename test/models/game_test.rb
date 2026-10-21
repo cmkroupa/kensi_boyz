@@ -111,4 +111,42 @@ class GameTest < ActiveSupport::TestCase
     assert_in_delta 0.5, breakdown.chance
     assert_in_delta breakdown.transfer * Elo::PROVISIONAL_BOOST, game.participations.find { |p| p.player == @cam }.delta, 0.01
   end
+
+  test "an idle player's rating drifts back toward 1000" do
+    travel_to Time.zone.local(2026, 1, 1, 12) do
+      Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, played_at: 1.minute.ago,
+        side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+      fresh = @cam.reload.singles_rating
+
+      assert_operator fresh, :>, 1000
+      assert_nil @cam.idle_days("singles")
+
+      travel_to 5.weeks.from_now
+      RatingReplay.call
+
+      assert_operator @cam.reload.singles_rating, :<, fresh
+      assert_operator @cam.singles_rating, :>, 1000
+      assert_equal 35, @cam.idle_days("singles")
+    end
+  end
+
+  test "decay applies before the next game so a returning player starts lower" do
+    travel_to Time.zone.local(2026, 1, 1, 12) do
+      Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, played_at: Time.current,
+        side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+      peak = @cam.reload.singles_rating
+      Game.create!(mode: "singles", side_a_score: 8, side_b_score: 4, played_at: 6.weeks.from_now,
+        side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @tyler.id ])
+
+      assert_operator @cam.participations.joins(:game).order("games.played_at").last.rating_before, :<, peak
+    end
+  end
+
+  test "players with no games do not decay" do
+    travel_to 1.year.from_now do
+      RatingReplay.call
+
+      assert_equal 1000, @cam.reload.singles_rating
+    end
+  end
 end

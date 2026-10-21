@@ -48,4 +48,18 @@ class EloTest < ActiveSupport::TestCase
     assert_equal Elo::PROVISIONAL_BOOST, Elo.provisional_boost(0)
     assert_equal 1.0, Elo.provisional_boost(Elo::PROVISIONAL_GAMES)
   end
+
+  test "no decay inside the grace period" do
+    assert_equal 1100, Elo.decayed(1100, Elo::DECAY_GRACE_DAYS)
+  end
+
+  test "decay pulls toward the start by 2% a week after the grace period" do
+    assert_in_delta 1098.0, Elo.decayed(1100, Elo::DECAY_GRACE_DAYS + 7), 0.001
+    assert_in_delta 902.0, Elo.decayed(900, Elo::DECAY_GRACE_DAYS + 7), 0.001
+  end
+
+  test "decay never crosses the starting rating" do
+    assert_operator Elo.decayed(1100, 3650), :>=, Elo::BASE_RATING
+    assert_operator Elo.decayed(900, 3650), :<=, Elo::BASE_RATING
+  end
 end

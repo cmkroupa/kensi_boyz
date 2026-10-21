@@ -63,6 +63,7 @@
         <ul class="mt-1 list-disc space-y-1 pl-5">
           <li>Everyone starts at <%= Elo::BASE_RATING.round %>, and 1v1 and 2v2 are rated separately.</li>
           <li>A player's first <%= Elo::PROVISIONAL_GAMES %> games in a mode move <%= Elo::PROVISIONAL_BOOST %>× as much, and a <span class="text-slate-400">?</span> shows until <%= Elo::UNSETTLED_GAMES %> games.</li>
+          <li>Sit out more than <%= Elo::DECAY_GRACE_DAYS %> days and your rating drifts back toward <%= Elo::BASE_RATING.round %>, about <%= (Elo::DECAY_PER_WEEK * 100).round %>% of the gap per idle week.</li>
           <li>In 2v2 a team's rating is its two players' average, and each player gets the full change.</li>
           <li>Bet odds come from the same win chance.</li>
         </ul>

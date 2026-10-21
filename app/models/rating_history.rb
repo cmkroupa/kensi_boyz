@@ -12,6 +12,7 @@ class RatingHistory
     results = player.results(mode)
     start = ((results.first&.game&.played_at || Time.current) - LEAD_IN).to_f
     line = [ [ start, Elo::BASE_RATING ] ] + results.map { |result| [ result.game.played_at.to_f, result.rating_after ] }
+    line << [ Time.current.to_f, player.rating(mode) ] if results.any? && (player.rating(mode) - results.last.rating_after).abs > 0.5
     [ Series.new(player.name, COLOR, line) ]
   end
 

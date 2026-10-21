@@ -17,6 +17,15 @@ class Player < ApplicationRecord
   def games_played(mode) = public_send("#{mode}_games_count")
   def ranked?(mode) = games_played(mode).positive?
 
+  # Days since the last game in a mode, once past the grace period (otherwise nil).
+  def idle_days(mode)
+    last = participations.joins(:game).where(games: { mode: Game.modes.fetch(mode) }).maximum("games.played_at")
+    return unless last
+
+    days = ((Time.current - last) / 86_400.0).floor
+    days if days > Elo::DECAY_GRACE_DAYS
+  end
+
   # Too few games for the rating to be trusted yet.
   def provisional?(mode) = ranked?(mode) && games_played(mode) < Elo::UNSETTLED_GAMES
 

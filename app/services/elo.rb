@@ -15,6 +15,11 @@ module Elo
   # Fewer games than this and a rating is shown with a "?".
   UNSETTLED_GAMES = 5
 
+  # Sit out longer than the grace period and your rating drifts back toward the
+  # starting rating, a little more each idle week.
+  DECAY_GRACE_DAYS = 7
+  DECAY_PER_WEEK = 0.02
+
   def self.expected(rating, opponent_rating)
     1.0 / (1.0 + 10**((opponent_rating - rating) / SCALE))
   end
@@ -23,6 +28,13 @@ module Elo
   def self.transfer(winner_rating:, loser_rating:, winner_points:, loser_points:)
     surprise = 1.0 - expected(winner_rating, loser_rating)
     [ K * margin_multiplier(winner_rating - loser_rating, winner_points - loser_points) * surprise, MIN_TRANSFER ].max
+  end
+
+  # The rating after sitting idle, pulled toward BASE_RATING (never past it).
+  # Smooth in time: no decay inside the grace period, then 2% of the gap per week.
+  def self.decayed(rating, idle_days)
+    overdue_weeks = [ idle_days - DECAY_GRACE_DAYS, 0 ].max / 7.0
+    BASE_RATING + (rating - BASE_RATING) * (1.0 - DECAY_PER_WEEK)**overdue_weeks
   end
 
   def self.provisional_boost(games_played)
