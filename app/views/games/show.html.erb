@@ -1,0 +1,40 @@
+<% content_for :title, "Game · KFL" %>
+<p class="text-base text-slate-500"><%= mode_label(@game.mode) %> · <%= l(@game.played_at, format: "%b %-d, %-l:%M %p") %></p>
+
+<div class="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+  <% [ @game.winner_side, @game.loser_side ].each_with_index do |side, index| %>
+    <% if index == 1 %>
+      <p class="text-5xl font-bold tabular-nums"><%= @game.score_for(@game.winner_side) %>–<%= @game.score_for(@game.loser_side) %></p>
+    <% end %>
+    <div class="min-w-0 <%= index == 1 ? 'text-right' : '' %> <%= index.zero? ? 'font-semibold' : 'text-slate-500' %>">
+      <% players = @game.participants_on(side).map(&:player) %>
+      <%= @game.doubles? ? link_to(names(@game.participants_on(side)), team_path(players.map(&:id).sort.join("-")), class: "hover:text-blue-600") : link_to(players.first.name, player_path(players.first, mode: @game.mode), class: "hover:text-blue-600") %>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-6 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+  <% @game.participations.sort_by { |p| [ p.side, p.player.name ] }.each do |participation| %>
+    <%= link_to player_path(participation.player, mode: @game.mode), class: "flex items-center justify-between px-4 py-4 hover:bg-blue-50" do %>
+      <span class="font-medium"><%= participation.player.name %></span>
+      <span class="tabular-nums">
+        <span class="text-slate-400"><%= rating_text(participation.rating_before) %> →</span>
+        <span class="font-semibold"><%= rating_text(participation.rating_after) %></span>
+        <span class="ml-1 <%= delta_class(participation.delta) %>"><%= delta_text(participation.delta) %></span>
+      </span>
+    <% end %>
+  <% end %>
+</div>
+
+<p class="mt-4 text-base text-slate-500">
+  Before the game, <%= names(@game.participants_on(@game.winner_side)) %> had a
+  <span class="font-semibold text-slate-900"><%= percent_text(@game.chance_for(@game.winner_side)) %></span> chance to win.
+</p>
+
+<% if admin? %>
+  <div class="mt-6 flex gap-3">
+    <%= link_to "Edit score", edit_game_path(@game), class: "rounded-xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700" %>
+    <%= button_to "Delete", game_path(@game), method: :delete, form: { data: { turbo_confirm: "Delete this game? Ratings will be recalculated." } },
+      class: "rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-red-500 hover:border-red-500" %>
+  </div>
+<% end %>

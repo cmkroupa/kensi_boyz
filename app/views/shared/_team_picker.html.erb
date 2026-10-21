@@ -1,0 +1,12 @@
+<%# locals: (side:, label:, players:, selected_ids:, name_prefix: "game[", name_suffix: "]") %>
+<div class="mt-2 flex flex-wrap gap-2">
+  <% players.each do |player| %>
+    <label class="cursor-pointer">
+      <%= check_box_tag "#{name_prefix}side_#{side}_player_ids#{name_suffix}[]", player.id, selected_ids.include?(player.id),
+        id: "side_#{side}_#{player.id}", class: "peer sr-only",
+        data: { action: "game-form#pick", game_form_target: "chip", side: side, name: player.name,
+                singles: player.singles_rating, doubles: player.doubles_rating } %>
+      <span class="block rounded-full border border-slate-300 px-4 py-3 text-base peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white"><%= player.name %></span>
+    </label>
+  <% end %>
+</div>

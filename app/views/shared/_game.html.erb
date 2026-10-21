@@ -1,0 +1,16 @@
+<%# locals: (game:, perspective: nil) %>
+<%# One game as "winner  score  loser"; with a perspective, shows that player's rating change instead of the winners'. %>
+<% shown = perspective || game.participants_on(game.winner_side).first %>
+<%= link_to game_path(game), class: "-mx-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl px-2 py-4 text-base hover:bg-blue-100/60" do %>
+  <% [ game.winner_side, game.loser_side ].each_with_index do |side, index| %>
+    <% if index == 1 %>
+      <div class="text-center">
+        <div class="text-lg font-semibold tabular-nums"><%= game.score_for(game.winner_side) %>–<%= game.score_for(game.loser_side) %></div>
+        <div class="text-sm <%= delta_class(shown.delta) %> tabular-nums"><%= delta_text(shown.delta) %></div>
+      </div>
+    <% end %>
+    <div class="min-w-0 break-words leading-snug <%= index == 1 ? 'text-right' : '' %> <%= index.zero? ? 'font-semibold' : 'text-slate-500' %>">
+      <%= names(game.participants_on(side)) %>
+    </div>
+  <% end %>
+<% end %>

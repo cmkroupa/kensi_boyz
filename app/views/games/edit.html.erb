@@ -1,0 +1,23 @@
+<% content_for :title, "Edit game · KFL" %>
+<h1 class="text-2xl font-semibold tracking-tight">Edit score</h1>
+<p class="mt-1 text-base text-slate-500"><%= mode_label(@game.mode) %> · ratings are recalculated when you save.</p>
+
+<%= form_with model: @game, class: "mt-4 space-y-6" do |form| %>
+  <% if @game.errors.any? %>
+    <ul class="rounded-lg bg-rose-50 px-3 py-2 text-base text-rose-800">
+      <% @game.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+    </ul>
+  <% end %>
+
+  <% %w[ a b ].each do |side| %>
+    <fieldset>
+      <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= names(@game.participants_on(side)) %></legend>
+      <%= render "shared/score_field", form: form, field: "side_#{side}_score", label: names(@game.participants_on(side)) %>
+    </fieldset>
+  <% end %>
+
+  <div class="flex gap-3">
+    <%= form.submit "Save score", class: "flex-1 rounded-xl bg-blue-600 px-4 py-4 font-medium text-white hover:bg-blue-700" %>
+    <%= link_to "Cancel", game_path(@game), class: "rounded-xl border border-slate-300 bg-white px-5 py-4 font-medium" %>
+  </div>
+<% end %>

@@ -1,0 +1,30 @@
+<%# locals: (game:, players:) %>
+<%= form_with model: game, data: { controller: "game-form" }, class: "space-y-6" do |form| %>
+  <% if game.errors.any? %>
+    <ul class="rounded-lg bg-rose-50 px-3 py-3 text-base text-rose-800">
+      <% game.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+    </ul>
+  <% end %>
+
+  <div class="inline-flex rounded-full bg-slate-200 p-1 text-base">
+    <% Game.modes.each_key do |mode| %>
+      <label class="cursor-pointer">
+        <%= form.radio_button :mode, mode, class: "peer sr-only", data: { action: "game-form#changeMode", game_form_target: "mode" } %>
+        <span class="block rounded-full px-4 py-1.5 font-medium text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm"><%= mode_label(mode) %></span>
+      </label>
+    <% end %>
+  </div>
+
+  <% { "a" => "Team 1", "b" => "Team 2" }.each do |side, label| %>
+    <fieldset>
+      <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= label %></legend>
+      <%= render "shared/team_picker", side: side, label: label, players: players,
+        selected_ids: game.public_send("side_#{side}_player_ids") %>
+      <%= render "shared/score_field", form: form, field: "side_#{side}_score", label: label %>
+    </fieldset>
+  <% end %>
+
+  <p data-game-form-target="preview" class="min-h-5 text-base text-slate-500"></p>
+
+  <%= form.submit "Save game", class: "w-full rounded-xl bg-blue-600 px-4 py-4 font-medium text-white hover:bg-blue-700" %>
+<% end %>

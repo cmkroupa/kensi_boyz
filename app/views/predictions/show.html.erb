@@ -1,0 +1,41 @@
+<% content_for :title, "Predict · KFL" %>
+<h1 class="text-2xl font-semibold tracking-tight">Predict a game</h1>
+<p class="mt-1 text-base text-slate-500">Pick the teams and see the likely score.</p>
+
+<%= form_with url: prediction_path, method: :get, data: { controller: "game-form", game_form_auto_submit_value: true, turbo_frame: "prediction" }, class: "mt-4 space-y-6" do |form| %>
+  <div class="inline-flex rounded-full bg-slate-200 p-1 text-base">
+    <% Game.modes.each_key do |mode| %>
+      <label class="cursor-pointer">
+        <%= radio_button_tag :mode, mode, current_mode == mode, class: "peer sr-only", data: { action: "game-form#changeMode", game_form_target: "mode" } %>
+        <span class="block rounded-full px-4 py-1.5 font-medium text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm"><%= mode_label(mode) %></span>
+      </label>
+    <% end %>
+  </div>
+
+  <% { "a" => [ "Team 1", @side_a_ids ], "b" => [ "Team 2", @side_b_ids ] }.each do |side, (label, ids)| %>
+    <fieldset>
+      <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= label %></legend>
+      <%= render "shared/team_picker", side: side, label: label, players: @players, selected_ids: ids, name_prefix: "", name_suffix: "" %>
+    </fieldset>
+  <% end %>
+
+<% end %>
+
+<%= turbo_frame_tag "prediction", data: { game_form_target: "result" } do %>
+  <% if @error %>
+    <p class="mt-6 rounded-lg bg-rose-50 px-3 py-3 text-base text-rose-800"><%= @error %></p>
+  <% elsif @prediction %>
+    <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 text-center">
+      <p class="text-base text-slate-500">Predicted score</p>
+      <div class="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <p class="min-w-0 break-words text-right text-base font-semibold"><%= @prediction.favorite.map(&:name).to_sentence(two_words_connector: " & ") %></p>
+        <p class="text-5xl font-bold tabular-nums"><%= Prediction::TABLE_MAX %>–<%= @prediction.underdog_points %></p>
+        <p class="min-w-0 break-words text-left text-base text-slate-500"><%= @prediction.underdog.map(&:name).to_sentence(two_words_connector: " & ") %></p>
+      </div>
+      <p class="mt-4 text-base">
+        <span class="text-xl font-semibold text-blue-600 tabular-nums"><%= percent_text(@prediction.confidence) %></span>
+        <span class="text-slate-500">confident <%= @prediction.favorite.map(&:name).to_sentence(two_words_connector: " & ") %> win</span>
+      </p>
+    </section>
+  <% end %>
+<% end %>
