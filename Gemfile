@@ -57,6 +57,15 @@ group :development, :test do
 end
 
 group :development do
+  # Finds duplicated code structure
+  gem "flay", require: false
+
+  # Scores method complexity
+  gem "flog", require: false
+
+  # Flags code smells
+  gem "reek", require: false
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 end
