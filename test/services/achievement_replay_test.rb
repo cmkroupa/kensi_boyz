@@ -16,42 +16,27 @@ class AchievementReplayTest < ActiveSupport::TestCase
     Achievement.where(player: player).then { |rows| scope ? rows.where(scope: scope) : rows }.pluck(:key)
   end
 
-  test "a first win and games played" do
-    10.times { log(@cam, @quinn) }
-
-    assert_includes keys(@cam), "first_win"
-    assert_includes keys(@cam), "games_10"
-    assert_not_includes keys(@cam), "games_25"
-    assert_includes keys(@quinn), "games_10"
-    assert_not_includes keys(@quinn), "first_win"
-  end
-
-  test "win streaks stack up and reset on a loss" do
+  test "five wins in a row earn a streak badge" do
     5.times { log(@cam, @quinn) }
     log(@quinn, @cam)
 
-    assert_equal %w[ win_streak_3 win_streak_5 ], keys(@cam).grep(/win_streak/).sort
+    assert_equal %w[ win_streak_5 ], keys(@cam).grep(/win_streak/)
     assert_empty keys(@quinn).grep(/win_streak/)
   end
 
-  test "a comeback needs three losses first" do
-    2.times { log(@quinn, @cam) }
-    log(@cam, @quinn)
+  test "a loss resets the streak" do
+    4.times { log(@cam, @quinn) }
+    log(@quinn, @cam)
+    4.times { log(@cam, @quinn) }
 
-    assert_not_includes keys(@cam), "comeback"
-
-    Game.destroy_all
-    3.times { log(@quinn, @cam) }
-    log(@cam, @quinn)
-
-    assert_includes keys(@cam), "comeback"
+    assert_empty keys(@cam).grep(/win_streak/)
   end
 
-  test "shutouts, shutout streaks and getting zeroed" do
+  test "shutouts and shutout streaks" do
     log(@cam, @quinn, 8, 0)
 
     assert_includes keys(@cam), "shutout"
-    assert_includes keys(@quinn), "got_zeroed"
+    assert_empty keys(@quinn)
     assert_not_includes keys(@cam), "shutout_streak_2"
 
     log(@cam, @quinn, 8, 0)
@@ -67,10 +52,9 @@ class AchievementReplayTest < ActiveSupport::TestCase
     assert_not_includes keys(@cam), "shutout_streak_2"
   end
 
-  test "nail-biters and clutch" do
+  test "clutch takes three one-point wins" do
     2.times { log(@cam, @quinn, 8, 7) }
 
-    assert_includes keys(@cam), "nail_biter"
     assert_not_includes keys(@cam), "clutch"
 
     log(@cam, @quinn, 8, 7)

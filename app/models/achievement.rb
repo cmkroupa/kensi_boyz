@@ -3,19 +3,10 @@
 # never leave a stale badge behind.
 class Achievement < ApplicationRecord
   CATALOG = {
-    "first_win" => { name: "First blood", description: "Win your first game", scope: :all },
-    "games_10" => { name: "Regular", description: "Play 10 games", scope: :all },
-    "games_25" => { name: "Veteran", description: "Play 25 games", scope: :all },
-    "games_50" => { name: "Lifer", description: "Play 50 games", scope: :all },
-    "games_100" => { name: "Centurion", description: "Play 100 games", scope: :all },
-    "win_streak_3" => { name: "Hat trick", description: "Win 3 in a row", scope: :mode },
     "win_streak_5" => { name: "On fire", description: "Win 5 in a row", scope: :mode },
     "win_streak_10" => { name: "Unstoppable", description: "Win 10 in a row", scope: :mode },
-    "comeback" => { name: "Comeback kid", description: "Win right after losing 3 in a row", scope: :mode },
     "shutout" => { name: "Shutout", description: "Win without the other side scoring", scope: :mode },
     "shutout_streak_2" => { name: "Clean sheets", description: "Two shutouts in a row", scope: :mode },
-    "got_zeroed" => { name: "Goose egg", description: "Lose without scoring", scope: :mode },
-    "nail_biter" => { name: "Nail-biter", description: "Win by a single point", scope: :mode },
     "clutch" => { name: "Clutch", description: "Win three games by a single point", scope: :mode },
     "giant_killer" => { name: "Giant killer", description: "Win with under a 25% chance", scope: :mode },
     "beat_the_best" => { name: "Beat the best", description: "Beat the top-rated player", scope: :mode },

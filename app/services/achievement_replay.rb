@@ -2,8 +2,7 @@
 # and saves the result. Like RatingReplay it runs from scratch after any change,
 # so correcting or deleting a game can never leave an unearned badge behind.
 class AchievementReplay
-  GAMES_PLAYED = { 10 => "games_10", 25 => "games_25", 50 => "games_50", 100 => "games_100" }.freeze
-  WIN_STREAKS = { 3 => "win_streak_3", 5 => "win_streak_5", 10 => "win_streak_10" }.freeze
+  WIN_STREAKS = { 5 => "win_streak_5", 10 => "win_streak_10" }.freeze
   RATING_CLUBS = { 1100 => "rating_1100", 1200 => "rating_1200" }.freeze
   GIANT_KILLER_CHANCE = 0.25
   BIG_BET_CENTS = 2000
@@ -15,7 +14,7 @@ class AchievementReplay
     "biggest_blowout" => 5, "most_games_in_day" => 4
   }.freeze
 
-  Form = Struct.new(:win_streak, :loss_streak, :shutout_streak, :one_point_wins, :partner_wins)
+  Form = Struct.new(:win_streak, :shutout_streak, :one_point_wins, :partner_wins)
 
   def self.call
     new.call
@@ -26,8 +25,7 @@ class AchievementReplay
     @awards = []
     @breaks = []
     @records = {}
-    @form = Hash.new { |hash, key| hash[key] = Form.new(0, 0, 0, 0, Hash.new(0)) }
-    @games_played = Hash.new(0)
+    @form = Hash.new { |hash, key| hash[key] = Form.new(0, 0, 0, Hash.new(0)) }
     @mode_games = Hash.new(0)
     @bet_streak = Hash.new(0)
     @ratings = {}
@@ -57,11 +55,8 @@ class AchievementReplay
       player_id = participation.player_id
       form = @form[[ player_id, game.mode ]]
 
-      award(player_id, "comeback", game) if form.loss_streak >= 3
       form.win_streak += 1
-      form.loss_streak = 0
       WIN_STREAKS.each { |length, key| award(player_id, key, game) if form.win_streak >= length }
-      award(player_id, "first_win", game)
       record("win_streak", game.mode, form.win_streak, game, player_id)
 
       if context[:loser_points].zero?
@@ -75,7 +70,6 @@ class AchievementReplay
 
       if game.margin == 1 && context[:winner_points] >= 7
         form.one_point_wins += 1
-        award(player_id, "nail_biter", game)
         award(player_id, "clutch", game) if form.one_point_wins >= 3
       end
 
@@ -90,18 +84,14 @@ class AchievementReplay
       form = @form[[ participation.player_id, game.mode ]]
       form.win_streak = 0
       form.shutout_streak = 0
-      form.loss_streak += 1
-      award(participation.player_id, "got_zeroed", game) if participation.points.zero?
       @bet_streak[participation.player_id] = 0 if game.bet?
     end
 
     def played(participation, game)
       player_id = participation.player_id
-      @games_played[player_id] += 1
       @mode_games[[ player_id, game.mode ]] += 1
       @ratings[[ player_id, game.mode ]] = participation.rating_after
 
-      GAMES_PLAYED.each { |count, key| award(player_id, key, game) if @games_played[player_id] >= count }
       RATING_CLUBS.each { |rating, key| award(player_id, key, game) if participation.rating_after >= rating }
       record("highest_rating", game.mode, participation.rating_after, game, player_id)
 
