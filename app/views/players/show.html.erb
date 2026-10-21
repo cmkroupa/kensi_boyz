@@ -45,6 +45,21 @@
     </ul>
   <% end %>
 
+  <% records = [
+    [ "Nemesis", @nemesis && @nemesis.other.name, @nemesis && "#{@nemesis.wins}-#{@nemesis.losses} against them", nil ],
+    [ "Victim", @victim && @victim.other.name, @victim && "#{@victim.wins}-#{@victim.losses} against them", nil ],
+    [ "Biggest upset", @upset && names(@upset.opponents), @upset && "#{@upset.points}–#{@upset.opponent_points} · #{percent_text(@upset.game.chance_for(@upset.side))} chance", @upset&.game ],
+    [ "Biggest blowout", @blowout && names(@blowout.opponents), @blowout && "#{@blowout.points}–#{@blowout.opponent_points}", @blowout&.game ],
+    [ "Worst loss", @worst_loss && names(@worst_loss.opponents), @worst_loss && "#{@worst_loss.points}–#{@worst_loss.opponent_points}", @worst_loss&.game ]
+  ].select { |_, name| name } %>
+  <% if records.any? %>
+    <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Records</h2>
+    <dl class="mt-2 grid grid-cols-2 gap-3 text-base">
+      <% records.each do |label, name, detail, game| %>
+        <%= render "players/record", label: label, name: name, detail: detail, game: game %>
+      <% end %>
+    </dl>
+  <% end %>
   <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Head to head · <%= mode_label(current_mode) %></h2>
   <ul class="mt-2 divide-y divide-slate-200 text-base">
     <% @rivalries.each do |rivalry| %>

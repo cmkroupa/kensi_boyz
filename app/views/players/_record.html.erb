@@ -1,0 +1,7 @@
+<%# locals: (label:, name:, detail:, game: nil) %>
+<% card = tag.div(class: [ "rounded-xl border border-slate-200 bg-white px-3 py-3", ("hover:bg-blue-50" if game) ]) do %>
+  <%= tag.dt(label, class: "text-sm text-slate-500") %>
+  <%= tag.dd(name, class: "truncate text-lg font-semibold") %>
+  <%= tag.dd(detail, class: "text-sm text-slate-400 tabular-nums") %>
+<% end %>
+<%= game ? link_to(card, game_path(game), class: "block") : card %>

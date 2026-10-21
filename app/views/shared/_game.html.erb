@@ -7,6 +7,7 @@
       <div class="text-center">
         <div class="text-lg font-semibold tabular-nums"><%= game.score_for(game.winner_side) %>–<%= game.score_for(game.loser_side) %></div>
         <div class="text-sm <%= delta_class(shown.delta) %> tabular-nums"><%= delta_text(shown.delta) %></div>
+        <% if game.upset? %><span class="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Upset</span><% end %>
       </div>
     <% end %>
     <div class="min-w-0 break-words leading-snug <%= index == 1 ? 'text-right' : '' %> <%= index.zero? ? 'font-semibold' : 'text-slate-500' %>">

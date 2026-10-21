@@ -1,6 +1,7 @@
 class Game < ApplicationRecord
   PLAYERS_PER_SIDE = { "singles" => 1, "doubles" => 2 }.freeze
   MAX_BET_CENTS = 99_900
+  UPSET_CHANCE = 0.30
 
   enum :mode, { singles: 0, doubles: 1 }
 
@@ -79,6 +80,9 @@ class Game < ApplicationRecord
       Elo.transfer(winner_rating: winner_rating, loser_rating: loser_rating,
         winner_points: score_for(winner_side), loser_points: score_for(loser_side)))
   end
+
+  # A win from a side that was given less than a 30% chance.
+  def upset? = chance_for(winner_side) < UPSET_CHANCE
 
   def participants_on(side)
     participations.select { |participation| participation.side == side }

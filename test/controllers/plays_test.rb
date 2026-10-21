@@ -95,4 +95,21 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "dialog h3", text: "This game"
   end
+
+  test "the profile shows records once there are enough games" do
+    3.times { Game.create!(mode: "singles", side_a_score: 8, side_b_score: 2, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ]) }
+    get player_path(@cam)
+
+    assert_select "h2", text: "Records"
+    assert_select "dt", text: "Victim"
+    assert_select "dt", text: "Biggest blowout"
+  end
+
+  test "a big upset is tagged on the game" do
+    4.times { Game.create!(mode: "singles", side_a_score: 8, side_b_score: 2, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ]) }
+    upset = Game.create!(mode: "singles", side_a_score: 8, side_b_score: 6, side_a_player_ids: [ @quinn.id ], side_b_player_ids: [ @cam.id ])
+    get game_path(upset)
+
+    assert_select "span", text: "Upset"
+  end
 end

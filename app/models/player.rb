@@ -1,5 +1,6 @@
 class Player < ApplicationRecord
   include Stats
+  include Records
 
   has_many :participations, dependent: :destroy
   has_many :games, through: :participations
