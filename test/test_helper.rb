@@ -2,6 +2,9 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 
+ENV["MEMBER_PASSCODE"] = "7742"
+ENV["ADMIN_PASSCODE"] = "2477"
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers

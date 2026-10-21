@@ -7,7 +7,7 @@ image: kfl
 # Deploy to these servers.
 servers:
   web:
-    - 165.22.9.11
+    - <%= ENV.fetch("KFL_SERVER_IP") { File.read(File.expand_path("~/.kfl_server_ip")).strip } %>
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -41,6 +41,8 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - GITHUB_BACKUP_TOKEN
+    - MEMBER_PASSCODE
+    - ADMIN_PASSCODE
   clear:
     # Where the nightly database backup is pushed (see DatabaseBackupJob).
     BACKUP_REPO: cmkroupa/kensi_boyz

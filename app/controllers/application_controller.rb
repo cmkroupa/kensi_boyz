@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   private
     def authenticated?
-      SessionsController::PASSCODES.value?(cookies.signed[SessionsController::COOKIE])
+      SessionsController::ROLES.include?(cookies.signed[SessionsController::COOKIE])
     end
 
     def admin?

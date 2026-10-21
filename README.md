@@ -12,8 +12,10 @@ DEMO_DATA=1 bin/rails db:seed      # optional: a pile of fake games (development
 bin/dev
 ```
 
-PINs: 7742 is a member, 2477 is an admin (edit scores, delete games, toggle rating decay). They live
-in `SessionsController`, so keep the repo private.
+Two PINs gate the app: a member PIN, and an admin PIN (edit scores, delete games, toggle rating
+decay). They come from the `MEMBER_PASSCODE` and `ADMIN_PASSCODE` environment variables, so locally run
+`MEMBER_PASSCODE=1234 ADMIN_PASSCODE=5678 bin/dev`. In production they're read from
+`~/.kfl_member_passcode` and `~/.kfl_admin_passcode` by `.kamal/secrets`. With neither set, nobody can sign in.
 
 ## Tests
 
@@ -36,7 +38,8 @@ this off from the leaderboard).
 bundle exec kamal deploy
 ```
 
-Secrets come from `.kamal/secrets`: the Rails master key and the backup token (below).
+Secrets come from `.kamal/secrets`: the Rails master key, the login PINs and the backup token (below).
+The server address isn't in the repo: put it in `~/.kfl_server_ip` (or set `KFL_SERVER_IP`).
 
 ## Backups
 
@@ -49,4 +52,4 @@ Secrets come from `.kamal/secrets`: the Rails master key and the backup token (b
   year after it's made), so renew it, update the file and redeploy.
 - Run one by hand: `bundle exec kamal app exec --reuse "bin/rails runner 'DatabaseBackupJob.perform_now'"`.
 - Pull the newest one down: `script/pull_db` (saves it in `storage/`), or `script/pull_db --replace-dev`
-  to make it your development database. The backups contain every game, so keep the repo private.
+  to make it your development database. The backups contain every game (names and scores only), so the public repo exposes that data.
