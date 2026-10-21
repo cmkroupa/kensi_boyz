@@ -17,7 +17,9 @@ module ChartHelper
       end
     end
     names = labels.map do |index, text|
-      tag.text(text, x: (left + slot * index + slot / 2).round(1), y: height - 6, "text-anchor": "middle", "font-size": 11, fill: "#94a3b8")
+      anchor = index.zero? ? "start" : (index == values.size - 1 ? "end" : "middle")
+      x = anchor == "start" ? left : (anchor == "end" ? width - right : left + slot * index + slot / 2)
+      tag.text(text, x: x.round(1), y: height - 6, "text-anchor": anchor, "font-size": 11, fill: "#94a3b8")
     end
 
     tag.svg(viewBox: "0 0 #{width} #{height}", class: "w-full", role: "img", "aria-label": label) do
