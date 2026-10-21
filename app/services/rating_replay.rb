@@ -18,23 +18,26 @@ class RatingReplay
 
   private
     def replay(game)
-      sides = game.participations.group_by(&:side)
-      rating_a = team_rating(game, sides["a"])
-      rating_b = team_rating(game, sides["b"])
+      winners = game.participants_on(game.winner_side)
+      losers = game.participants_on(game.loser_side)
 
-      sides["a"].each { |p| apply(game, p, rating_a, rating_b, game.side_a_score, game.side_b_score) }
-      sides["b"].each { |p| apply(game, p, rating_b, rating_a, game.side_b_score, game.side_a_score) }
+      transfer = Elo.transfer(
+        winner_rating: team_rating(game, winners), loser_rating: team_rating(game, losers),
+        winner_points: game.score_for(game.winner_side), loser_points: game.score_for(game.loser_side)
+      )
+
+      winners.each { |participation| apply(game, participation, transfer) }
+      losers.each { |participation| apply(game, participation, -transfer) }
     end
 
     def team_rating(game, participations)
       participations.sum { |p| @standings[[ p.player_id, game.mode ]].rating } / participations.size
     end
 
-    def apply(game, participation, team_rating, opponent_rating, points, opponent_points)
+    def apply(game, participation, change)
       standing = @standings[[ participation.player_id, game.mode ]]
       before = standing.rating
-      standing.rating += Elo.delta(rating: team_rating, opponent_rating: opponent_rating,
-        points: points, opponent_points: opponent_points, games_played: standing.games)
+      standing.rating += change
       standing.games += 1
       participation.update_columns(rating_before: before, rating_after: standing.rating)
     end

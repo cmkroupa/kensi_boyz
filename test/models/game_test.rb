@@ -26,6 +26,21 @@ class GameTest < ActiveSupport::TestCase
     assert_operator @cam.reload.singles_rating, :>, close
   end
 
+  test "winning never costs rating, even as a heavy favourite" do
+    5.times { log("singles", [ @cam ], [ @quinn ], 8, 7) }
+    before = @cam.reload.singles_rating
+    log("singles", [ @cam ], [ @quinn ], 8, 7)
+
+    assert_operator @cam.reload.singles_rating, :>, before
+  end
+
+  test "ratings are zero-sum" do
+    log("singles", [ @cam ], [ @quinn ], 8, 3)
+    log("singles", [ @quinn ], [ @cam ], 8, 6)
+
+    assert_in_delta 2000, @cam.reload.singles_rating + @quinn.reload.singles_rating
+  end
+
   test "1v1 and 2v2 ratings are tracked separately" do
     log("singles", [ @cam ], [ @quinn ], 8, 3)
 
