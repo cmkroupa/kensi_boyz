@@ -41,13 +41,6 @@ class PredictionTest < ActiveSupport::TestCase
     assert_not predict(@strong, @strong).valid?
   end
 
-  test "bet terms make the favourite risk more than the underdog" do
-    terms = predict(@strong, @weak).bet_terms(500)
-
-    assert_equal "a", terms.favorite_side
-    assert_operator terms.favorite_stake_cents, :>, 500
-  end
-
   test "an upset would move more rating than the favourite winning" do
     prediction = predict(@strong, @weak)
 

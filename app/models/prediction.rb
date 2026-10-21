@@ -32,11 +32,6 @@ class Prediction
     Elo.transfer(winner_rating: winner, loser_rating: loser, winner_points: TABLE_MAX, loser_points: underdog_points)
   end
 
-  # Fair terms for a bet on this matchup; the underdog puts up the amount.
-  def bet_terms(underdog_stake_cents)
-    Moneyline.terms(chance_a: chance_a, underdog_stake_cents: underdog_stake_cents)
-  end
-
   def confidence = [ chance_a, 1 - chance_a ].max
 
   # Rating gaps between roommates are small, so a win chance of 55-65% would

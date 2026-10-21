@@ -62,12 +62,13 @@ export default class extends Controller {
     const favorite = chanceA >= 0.5 ? "a" : "b"
     const chance = Math.min(Math.max(chanceA, 1 - chanceA), 0.9)
     const favoriteCents = Math.round((underdogCents * chance) / (1 - chance) / 25) * 25
+    const each = this.mode === "doubles" ? " each" : ""
     const line = (side) => {
       const risks = side === favorite ? favoriteCents : underdogCents
       const wins = side === favorite ? underdogCents : favoriteCents
-      return `${this.teamName(side)} risks ${this.money(risks)} to win ${this.money(wins)}`
+      return `${this.teamName(side)} risks ${this.money(risks)} to win ${this.money(wins)}${each}`
     }
-    return `${line("a")}\n${line("b")}`
+    return `Bet · ${this.money(underdogCents)} from the underdog\n${line("a")}\n${line("b")}`
   }
 
   teamName(side) {

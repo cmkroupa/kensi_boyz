@@ -64,16 +64,10 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{games_path}']", count: 0
   end
 
-  test "a bet on a matchup shows what each side risks and wins" do
-    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ], bet_dollars: 5)
+  test "the matchup form has its payout lines directly under the bet input" do
+    get head_to_head_path
 
-    assert_select "body", text: /risks \$5 to win \$5/
-  end
-
-  test "a matchup without a bet shows no payouts" do
-    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
-
-    assert_select "body", text: /risks/, count: 0
+    assert_select "fieldset input[name='bet_dollars'] ~ * [data-game-form-target='terms'], fieldset [data-controller='amount'] + p[data-game-form-target='terms']"
   end
 
   test "a matchup shows the predicted score and the Elo change for either team winning" do
