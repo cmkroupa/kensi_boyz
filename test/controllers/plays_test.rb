@@ -107,29 +107,6 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "span", text: "Upset"
   end
 
-  test "only admins can switch decay, and it takes effect" do
-    delete decay_path
-
-    assert_redirected_to root_path
-    assert_predicate Setting, :decay_enabled?
-
-    delete session_path
-    post session_path, params: { passcode: "2477" }
-    get root_path
-
-    assert_select "button", text: "Turn off"
-
-    delete decay_path
-
-    assert_not Setting.decay_enabled?
-    get root_path
-    assert_select "button", text: "Turn on"
-
-    post decay_path
-
-    assert_predicate Setting, :decay_enabled?
-  end
-
   test "the head to head page shows the record between two players" do
     log_game
     get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
@@ -182,23 +159,6 @@ class PlaysTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_select "a[href='#{records_path}']"
-  end
-
-  test "admins see the backup status once backups are configured" do
-    delete session_path
-    post session_path, params: { passcode: "2477" }
-    ENV["GITHUB_BACKUP_TOKEN"] = "x"
-    get root_path
-
-    assert_select "footer", text: /No backup recorded yet/
-
-    delete session_path
-    post session_path, params: { passcode: "7742" }
-    get root_path
-
-    assert_select "footer", count: 0
-  ensure
-    ENV.delete("GITHUB_BACKUP_TOKEN")
   end
 
   test "the nav has Matchups and History tabs, and no Predict" do

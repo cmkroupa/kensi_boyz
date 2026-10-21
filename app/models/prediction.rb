@@ -38,18 +38,18 @@ class Prediction
   # make every score 8-6 or 8-7. Points are spread more sharply than wins:
   # the favorite's expected share of points uses a tighter Elo scale, and the
   # underdog scores TABLE_MAX * (1 - share) / share. Even matchups land on 8-7.
-  def underdog_points
-    (TABLE_MAX * (1 - favorite_point_share) / favorite_point_share).round.clamp(0, TABLE_MAX - 1)
+  def underdog_points = self.class.underdog_points_for(rating_a - rating_b)
+
+  # The underdog's expected points for a given rating gap in either direction.
+  def self.underdog_points_for(rating_gap)
+    share = 1.0 / (1.0 + 10**(-rating_gap.abs / POINT_SCALE))
+    (TABLE_MAX * (1 - share) / share).round.clamp(0, TABLE_MAX - 1)
   end
 
   def score_a = favorite.equal?(side_a) ? TABLE_MAX : underdog_points
   def score_b = favorite.equal?(side_a) ? underdog_points : TABLE_MAX
 
   private
-    def favorite_point_share
-      1.0 / (1.0 + 10**(-(rating_a - rating_b).abs / POINT_SCALE))
-    end
-
     def average_rating(players)
       players.sum { |player| player.rating(mode) } / players.size
     end
