@@ -54,7 +54,7 @@ export default class extends Controller {
   }
 
   betChanged() {
-    this.refresh(false)
+    this.refresh()
   }
 
   // Mirrors Moneyline: the underdog puts up the bet, the favourite risks enough to make it fair.

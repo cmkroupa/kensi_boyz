@@ -71,4 +71,16 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "form[action='#{games_path}']", count: 0
   end
+
+  test "predict shows what each side risks and wins when there is a bet" do
+    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ], bet_dollars: 5)
+
+    assert_select "body", text: /risks \$5 to win \$5/
+  end
+
+  test "predict without a bet shows no payouts" do
+    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "body", text: /risks/, count: 0
+  end
 end

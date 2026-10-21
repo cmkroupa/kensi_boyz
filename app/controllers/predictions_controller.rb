@@ -8,6 +8,7 @@ class PredictionsController < ApplicationController
     prediction = Prediction.new(mode: current_mode, side_a: @players.select { |p| @side_a_ids.include?(p.id) },
       side_b: @players.select { |p| @side_b_ids.include?(p.id) })
     @prediction = prediction if prediction.valid?
+    @bet_cents = params[:bet_dollars].to_i.clamp(0, Game::MAX_BET_CENTS / 100) * 100
     @error = "Pick #{Game::PLAYERS_PER_SIDE[current_mode]} per team, nobody on both." unless @prediction
   end
 

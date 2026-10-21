@@ -26,6 +26,11 @@ class Prediction
   def favorite = chance_a >= 0.5 ? side_a : side_b
   def underdog = favorite.equal?(side_a) ? side_b : side_a
 
+  # Fair terms for a bet on this matchup; the underdog puts up the amount.
+  def bet_terms(underdog_stake_cents)
+    Moneyline.terms(chance_a: chance_a, underdog_stake_cents: underdog_stake_cents)
+  end
+
   def confidence = [ chance_a, 1 - chance_a ].max
 
   # Rating gaps between roommates are small, so a win chance of 55-65% would

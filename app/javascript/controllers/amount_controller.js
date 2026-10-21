@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Dollar amount entry on the same keypad as the scores. Stays open until Done
 // since a bet can be one to three digits, and tells the form when it changes.
 export default class extends Controller {
-  static targets = ["input", "display", "dialog"]
+  static targets = ["input", "display", "dialog", "readout"]
 
   connect() {
     this.draft = ""
@@ -45,5 +45,7 @@ export default class extends Controller {
     this.displayTarget.textContent = `$${dollars}`
     this.displayTarget.classList.toggle("text-slate-300", dollars === 0)
     this.displayTarget.classList.toggle("text-slate-900", dollars !== 0)
+    this.readoutTarget.textContent = `$${dollars}`
+    this.readoutTarget.classList.toggle("text-slate-300", dollars === 0)
   }
 }
