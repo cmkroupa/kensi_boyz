@@ -215,4 +215,21 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href='#{records_path}']"
   end
+
+  test "admins see the backup status once backups are configured" do
+    delete session_path
+    post session_path, params: { passcode: "2477" }
+    ENV["GITHUB_BACKUP_TOKEN"] = "x"
+    get root_path
+
+    assert_select "footer", text: /No backup recorded yet/
+
+    delete session_path
+    post session_path, params: { passcode: "7742" }
+    get root_path
+
+    assert_select "footer", count: 0
+  ensure
+    ENV.delete("GITHUB_BACKUP_TOKEN")
+  end
 end

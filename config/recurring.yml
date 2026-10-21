@@ -10,6 +10,9 @@
 #     schedule: at 5am every day
 
 production:
+  nightly_backup:
+    class: DatabaseBackupJob
+    schedule: every day at 8am
   refresh_ratings:
     class: RatingRefreshJob
     schedule: every day at 5am

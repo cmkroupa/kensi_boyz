@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+# Downloads the newest nightly database backup from GitHub into storage/.
+#
+#   script/pull_db                saves storage/backup-YYYY-MM-DD.sqlite3
+#   script/pull_db --replace-dev  also makes it your development database
+#                                 (the old one is kept as development-before-restore.sqlite3)
+#
+# The token comes from GITHUB_BACKUP_TOKEN or ~/.kfl_github_token. Stop the local
+# Rails server before using --replace-dev.
+require "net/http"
+require "json"
+require "fileutils"
+
+REPO = ENV.fetch("BACKUP_REPO", "cmkroupa/kensi_boyz")
+BRANCH = ENV.fetch("BACKUP_BRANCH", "db-backups")
+STORAGE = File.expand_path("../storage", __dir__)
+
+token = ENV["GITHUB_BACKUP_TOKEN"] || (File.read(File.expand_path("~/.kfl_github_token")).strip rescue nil)
+abort "No token: set GITHUB_BACKUP_TOKEN or put it in ~/.kfl_github_token" if token.to_s.empty?
+
+def get(path, token, accept)
+  uri = URI("https://api.github.com#{path}")
+  request = Net::HTTP::Get.new(uri)
+  request["Authorization"] = "Bearer #{token}"
+  request["Accept"] = accept
+  request["User-Agent"] = "kfl-backup"
+  Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(request) }
+end
+
+listing = get("/repos/#{REPO}/contents/backups?ref=#{BRANCH}", token, "application/vnd.github+json")
+abort "Couldn't list backups (#{listing.code}): #{listing.body}" unless listing.code == "200"
+
+latest = JSON.parse(listing.body).map { |file| file["name"] }.grep(/\Akfl-\d{4}-\d{2}-\d{2}\.sqlite3\z/).max
+abort "No backups found on #{BRANCH} yet." unless latest
+
+download = get("/repos/#{REPO}/contents/backups/#{latest}?ref=#{BRANCH}", token, "application/vnd.github.raw+json")
+abort "Couldn't download #{latest} (#{download.code})" unless download.code == "200"
+
+target = File.join(STORAGE, "backup-#{latest[/\d{4}-\d{2}-\d{2}/]}.sqlite3")
+File.binwrite(target, download.body)
+puts "Saved #{target} (#{download.body.bytesize} bytes)"
+
+if ARGV.include?("--replace-dev")
+  development = File.join(STORAGE, "development.sqlite3")
+  FileUtils.cp(development, File.join(STORAGE, "development-before-restore.sqlite3")) if File.exist?(development)
+  FileUtils.rm_f([ "#{development}-wal", "#{development}-shm" ])
+  FileUtils.cp(target, development)
+  puts "Replaced the development database. Run bin/rails db:migrate if the schema has moved on."
+end

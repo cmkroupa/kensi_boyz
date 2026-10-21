@@ -50,6 +50,15 @@
       <% end %>
       <%= yield %>
     </main>
+    <% if admin? && DatabaseBackup.configured? %>
+      <footer class="mx-auto max-w-3xl px-4 pb-8 text-sm <%= DatabaseBackup.stale? ? 'text-red-500' : 'text-slate-400' %>">
+        <% if DatabaseBackup.last_success %>
+          Last backup: <%= l(DatabaseBackup.last_success.in_time_zone, format: "%b %-d, %-l:%M %p") %><%= " · overdue" if DatabaseBackup.stale? %>
+        <% else %>
+          No backup recorded yet.
+        <% end %>
+      </footer>
+    <% end %>
 
   </body>
 </html>
