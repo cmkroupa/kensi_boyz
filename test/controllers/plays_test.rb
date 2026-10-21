@@ -83,4 +83,12 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "body", text: /risks/, count: 0
   end
+
+  test "predict shows the Elo change for either team winning" do
+    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "body", text: /Elo at 8–7/
+    assert_select "body", text: /If Cam win/
+    assert_select "body", text: /If Quinn win/
+  end
 end

@@ -47,4 +47,10 @@ class PredictionTest < ActiveSupport::TestCase
     assert_equal "a", terms.favorite_side
     assert_operator terms.favorite_stake_cents, :>, 500
   end
+
+  test "an upset would move more rating than the favourite winning" do
+    prediction = predict(@strong, @weak)
+
+    assert_operator prediction.elo_change_if_wins(prediction.side_b), :>, prediction.elo_change_if_wins(prediction.side_a)
+  end
 end

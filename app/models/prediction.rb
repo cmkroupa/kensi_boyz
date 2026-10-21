@@ -26,6 +26,12 @@ class Prediction
   def favorite = chance_a >= 0.5 ? side_a : side_b
   def underdog = favorite.equal?(side_a) ? side_b : side_a
 
+  # Rating points each player on a team gains if that team wins at the predicted score.
+  def elo_change_if_wins(team)
+    winner, loser = team.equal?(side_a) ? [ rating_a, rating_b ] : [ rating_b, rating_a ]
+    Elo.transfer(winner_rating: winner, loser_rating: loser, winner_points: TABLE_MAX, loser_points: underdog_points)
+  end
+
   # Fair terms for a bet on this matchup; the underdog puts up the amount.
   def bet_terms(underdog_stake_cents)
     Moneyline.terms(chance_a: chance_a, underdog_stake_cents: underdog_stake_cents)
