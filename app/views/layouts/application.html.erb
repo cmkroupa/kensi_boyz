@@ -32,8 +32,8 @@
           </div>
           <%= button_to "Log out", session_path, method: :delete, class: "text-base text-slate-500 hover:text-slate-900" %>
         </div>
-        <nav class="mx-auto mt-2 grid max-w-3xl grid-cols-3 px-4 text-center text-base">
-          <% { leaderboard: [ "Leaderboard", root_path ], predict: [ "Predict", prediction_path ], games: [ "Games", games_path ] }.each do |section, (label, path)| %>
+        <nav class="mx-auto mt-2 grid max-w-3xl grid-cols-4 px-4 text-center text-base">
+          <% { leaderboard: [ "Leaderboard", root_path ], play: [ "Play", play_path ], predict: [ "Predict", prediction_path ], games: [ "Games", games_path ] }.each do |section, (label, path)| %>
             <%= link_to label, path, "aria-current": (nav_section == section ? "page" : nil),
               class: [ "border-b-2 py-3 font-medium", nav_section == section ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:text-slate-900" ] %>
           <% end %>

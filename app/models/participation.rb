@@ -12,6 +12,10 @@ class Participation < ApplicationRecord
     rating_after - rating_before
   end
 
+  def bet_result_cents
+    game.bet? ? game.bet_result_for(side) : 0
+  end
+
   def points
     game.score_for(side)
   end

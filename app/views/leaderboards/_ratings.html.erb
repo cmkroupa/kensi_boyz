@@ -1,0 +1,46 @@
+<ol class="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+  <% @players.each do |player| %>
+    <li>
+      <%= link_to player_path(player, mode: current_mode), class: "flex items-center gap-3 px-4 py-4 hover:bg-blue-50" do %>
+        <span class="w-5 text-base text-slate-400 tabular-nums"><%= player.rank(current_mode) || "–" %></span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate font-medium"><%= player.name %></span>
+          <% if player.ranked?(current_mode) %>
+            <span class="block text-sm text-slate-400 tabular-nums"><%= player.wins(current_mode) %>-<%= player.losses(current_mode) %> · <span class="font-semibold <%= streak_class(player.current_streak(current_mode)) %>"><%= player.current_streak(current_mode).label %></span></span>
+          <% end %>
+        </span>
+        <span class="w-16 text-right text-xl font-semibold tabular-nums"><%= player.ranked?(current_mode) ? rating_text(player.rating(current_mode)) : "—" %></span>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+
+<% if @top_duos.present? %>
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Top 5 duos</h2>
+  <ol class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+    <% @top_duos.each_with_index do |pair, index| %>
+      <li>
+        <%= link_to team_path(pair), class: "flex items-center gap-3 px-4 py-4 hover:bg-blue-50" do %>
+          <span class="w-5 text-base text-slate-400 tabular-nums"><%= index + 1 %></span>
+          <span class="flex-1 font-medium"><%= pair.players.map(&:name).to_sentence(two_words_connector: " & ") %></span>
+          <span class="text-sm text-slate-400 tabular-nums"><%= pair.wins %>-<%= pair.losses %></span>
+          <span class="w-12 text-right font-semibold tabular-nums"><%= percent_text(pair.win_rate) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+<% end %>
+
+<div class="mt-8 flex items-baseline justify-between">
+  <h2 class="text-base font-semibold uppercase tracking-wide text-slate-500">Recent games</h2>
+  <%= link_to "View all →", games_path, class: "text-base text-blue-600 hover:underline" %>
+</div>
+<% if @recent_games.empty? %>
+  <p class="mt-3 text-base text-slate-500">No games yet. Log the first one.</p>
+<% else %>
+  <div class="mt-2 divide-y divide-slate-200">
+    <% @recent_games.each do |game| %>
+      <%= render "shared/game", game: game %>
+    <% end %>
+  </div>
+<% end %>

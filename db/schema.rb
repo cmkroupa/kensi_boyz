@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_20_220027) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_21_015755) do
   create_table "games", force: :cascade do |t|
     t.integer "mode", null: false
     t.integer "side_a_score", null: false
@@ -18,6 +18,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_220027) do
     t.datetime "played_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "underdog_stake_cents", default: 0, null: false
+    t.integer "favorite_stake_cents", default: 0, null: false
+    t.string "favorite_side"
     t.index ["played_at"], name: "index_games_on_played_at"
   end
 
@@ -34,6 +37,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_220027) do
     t.index ["player_id"], name: "index_participations_on_player_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.integer "from_player_id", null: false
+    t.integer "to_player_id", null: false
+    t.integer "cents", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from_player_id"], name: "index_payments_on_from_player_id"
+    t.index ["to_player_id"], name: "index_payments_on_to_player_id"
+  end
+
   create_table "players", force: :cascade do |t|
     t.string "name", null: false
     t.float "singles_rating", default: 1000.0, null: false
@@ -47,4 +60,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_220027) do
 
   add_foreign_key "participations", "games"
   add_foreign_key "participations", "players"
+  add_foreign_key "payments", "players", column: "from_player_id"
+  add_foreign_key "payments", "players", column: "to_player_id"
 end

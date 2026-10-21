@@ -1,0 +1,34 @@
+<% if @lines.all? { |line| line.won.zero? && line.lost.zero? } %>
+  <p class="mt-6 text-base text-slate-500">No bets yet. Add a bet when you log a game on the Play tab.</p>
+<% else %>
+  <ol class="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+    <% @lines.each_with_index do |line, index| %>
+      <li>
+        <%= link_to player_path(line.player), class: "flex items-center gap-3 px-4 py-4 hover:bg-blue-50" do %>
+          <span class="w-5 text-base text-slate-400 tabular-nums"><%= index + 1 %></span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate font-medium"><%= line.player.name %></span>
+            <span class="block text-sm text-slate-400 tabular-nums">Bets <%= line.won %>-<%= line.lost %><%= " · best win #{money_text(line.biggest_win_cents)}" if line.biggest_win_cents.positive? %></span>
+          </span>
+          <span class="text-xl font-semibold tabular-nums <%= money_class(line.net_cents) %>"><%= money_delta_text(line.net_cents) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Settle up</h2>
+  <% if @transfers.empty? %>
+    <p class="mt-2 text-base text-slate-500">Everyone's square.</p>
+  <% else %>
+    <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+      <% @transfers.each do |transfer| %>
+        <li class="flex items-center justify-between gap-3 px-4 py-3 text-base">
+          <span class="min-w-0"><span class="font-medium"><%= transfer.from.name %></span> pays <span class="font-medium"><%= transfer.to.name %></span> <span class="font-semibold tabular-nums"><%= money_text(transfer.cents) %></span></span>
+          <%= button_to "Mark paid", payments_path, params: { payment: { from_player_id: transfer.from.id, to_player_id: transfer.to.id, cents: transfer.cents } },
+            data: { turbo_confirm: "#{transfer.from.name} paid #{transfer.to.name} #{money_text(transfer.cents)}?" },
+            class: "rounded-full bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>

@@ -1,12 +1,7 @@
 <% content_for :title, "Games · KFL" %>
-<h1 class="text-2xl font-semibold tracking-tight">Log a game</h1>
-<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-  <%= render "games/form", game: @game, players: @players %>
-</div>
-
-<h2 class="mt-10 text-2xl font-semibold tracking-tight">
-  <%= @player ? "#{@player.name}’s games" : "History" %>
-</h2>
+<h1 class="text-2xl font-semibold tracking-tight">
+  <%= @player ? "#{@player.name}’s games" : "Games" %>
+</h1>
 
 <div class="mt-3 flex gap-2 text-base">
   <% { nil => "All", "singles" => "1v1", "doubles" => "2v2" }.each do |mode, label| %>
@@ -23,7 +18,7 @@
       <% perspective = @player && game.participations.find { |p| p.player_id == @player.id } %>
       <div>
         <%= render "shared/game", game: game, perspective: perspective %>
-        <p class="-mt-3 pb-3 text-sm text-slate-400"><%= mode_label(game.mode) %> · <%= l(game.played_at, format: "%b %-d, %-l:%M %p") %></p>
+        <p class="-mt-3 pb-3 text-sm text-slate-400"><%= mode_label(game.mode) %> · <%= l(game.played_at, format: "%b %-d, %-l:%M %p") %><%= " · #{money_text(game.underdog_stake_cents)} bet" if game.bet? %></p>
       </div>
     <% end %>
   </div>

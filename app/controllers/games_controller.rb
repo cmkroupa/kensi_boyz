@@ -3,10 +3,8 @@ class GamesController < ApplicationController
 
   before_action :require_admin, only: %i[ edit update destroy ]
 
-  # The Games page is the log form on top and the history below it.
   def index
     load_history
-    @game = Game.new(mode: @mode || "singles")
   end
 
   def show
@@ -16,10 +14,10 @@ class GamesController < ApplicationController
   def create
     @game = Game.new(game_params)
     if @game.save
-      redirect_to games_path, notice: "Game logged."
+      redirect_to @game, notice: "Game logged."
     else
-      load_history
-      render :index, status: :unprocessable_content
+      @players = Player.alphabetically
+      render "plays/show", status: :unprocessable_content
     end
   end
 
@@ -43,7 +41,6 @@ class GamesController < ApplicationController
 
   private
     def load_history
-      @players = Player.alphabetically
       @player = Player.find_by(id: params[:player_id])
       @mode = params[:mode] if Game.modes.key?(params[:mode])
       scope = Game.preloaded.newest_first
@@ -55,6 +52,6 @@ class GamesController < ApplicationController
     end
 
     def game_params
-      params.expect(game: [ :mode, :side_a_score, :side_b_score, side_a_player_ids: [], side_b_player_ids: [] ])
+      params.expect(game: [ :mode, :side_a_score, :side_b_score, :bet_dollars, side_a_player_ids: [], side_b_player_ids: [] ])
     end
 end

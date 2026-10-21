@@ -7,6 +7,7 @@ module ApplicationHelper
   def nav_section
     case controller_name
     when "games" then :games
+    when "plays" then :play
     when "predictions" then :predict
     else :leaderboard
     end
@@ -28,6 +29,22 @@ module ApplicationHelper
     return "text-slate-400" if streak.length.zero?
 
     streak.won ? "text-green-600" : "text-red-500"
+  end
+
+  # Whole dollars stay whole ("$7"); anything else shows cents ("$6.50").
+  def money_text(cents)
+    dollars = cents.abs / 100.0
+    (cents % 100).zero? ? "$#{cents.abs / 100}" : format("$%.2f", dollars)
+  end
+
+  def money_delta_text(cents)
+    return money_text(0) if cents.zero?
+    "#{cents.positive? ? "+" : "−"}#{money_text(cents)}"
+  end
+
+  def money_class(cents)
+    return "text-slate-400" if cents.zero?
+    cents.positive? ? "text-green-600" : "text-red-500"
   end
 
   def percent_text(fraction) = fraction ? "#{(fraction * 100).round}%" : "—"

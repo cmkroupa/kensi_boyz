@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // both sides) and previews each team's win chance before saving. On the
 // predict page (autoSubmit) it submits the form itself once both teams are full.
 export default class extends Controller {
-  static targets = ["chip", "mode", "preview", "result"]
+  static targets = ["chip", "mode", "preview", "result", "bet", "terms"]
   static values = { autoSubmit: Boolean }
 
   connect() {
@@ -53,14 +53,44 @@ export default class extends Controller {
     return picked.reduce((sum, chip) => sum + Number(chip.dataset[this.mode]), 0) / picked.length
   }
 
+  betChanged() {
+    this.refresh(false)
+  }
+
+  // Mirrors Moneyline: the underdog puts up the bet, the favourite risks enough to make it fair.
+  terms(chanceA, underdogCents) {
+    const favorite = chanceA >= 0.5 ? "a" : "b"
+    const chance = Math.min(Math.max(chanceA, 1 - chanceA), 0.9)
+    const favoriteCents = Math.round((underdogCents * chance) / (1 - chance) / 25) * 25
+    const line = (side) => {
+      const risks = side === favorite ? favoriteCents : underdogCents
+      const wins = side === favorite ? underdogCents : favoriteCents
+      return `${this.teamName(side)} risks ${this.money(risks)} to win ${this.money(wins)}`
+    }
+    return `${line("a")}\n${line("b")}`
+  }
+
+  teamName(side) {
+    return this.chipsFor(side).filter((chip) => chip.checked).map((chip) => chip.dataset.name).join(" & ")
+  }
+
+  money(cents) {
+    return cents % 100 === 0 ? `$${cents / 100}` : `$${(cents / 100).toFixed(2)}`
+  }
+
   refresh(submit = true) {
     const a = this.average("a")
     const b = this.average("b")
     const ready = a !== null && b !== null
+    const chanceA = ready ? 1 / (1 + 10 ** ((b - a) / 400)) : null
 
     if (this.hasPreviewTarget) {
-      const chanceA = ready ? 1 / (1 + 10 ** ((b - a) / 400)) : null
       this.previewTarget.textContent = ready ? `Team 1 has a ${Math.round(chanceA * 100)}% chance to win.` : ""
+    }
+
+    if (this.hasTermsTarget) {
+      const cents = this.hasBetTarget ? Number(this.betTarget.value) * 100 : 0
+      this.termsTarget.textContent = ready && cents > 0 ? this.terms(chanceA, cents) : ""
     }
 
     if (!this.autoSubmitValue || !submit) return
