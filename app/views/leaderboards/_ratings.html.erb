@@ -9,7 +9,7 @@
             <span class="block text-sm text-slate-400 tabular-nums"><%= player.wins(current_mode) %>-<%= player.losses(current_mode) %> · <span class="font-semibold <%= streak_class(player.current_streak(current_mode)) %>"><%= player.current_streak(current_mode).label %></span></span>
           <% end %>
         </span>
-        <span class="w-16 text-right text-xl font-semibold tabular-nums"><%= player.ranked?(current_mode) ? rating_text(player.rating(current_mode)) : "—" %></span>
+        <span class="w-16 text-right text-xl font-semibold tabular-nums"><%= player.ranked?(current_mode) ? rating_text(player.rating(current_mode)) : "—" %><% if player.provisional?(current_mode) %><span class="text-slate-400" title="Fewer than <%= Elo::UNSETTLED_GAMES %> games">?</span><% end %></span>
       <% end %>
     </li>
   <% end %>

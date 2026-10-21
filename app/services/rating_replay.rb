@@ -37,7 +37,7 @@ class RatingReplay
     def apply(game, participation, change)
       standing = @standings[[ participation.player_id, game.mode ]]
       before = standing.rating
-      standing.rating += change
+      standing.rating += change * Elo.provisional_boost(standing.games)
       standing.games += 1
       participation.update_columns(rating_before: before, rating_after: standing.rating)
     end

@@ -17,6 +17,9 @@ class Player < ApplicationRecord
   def games_played(mode) = public_send("#{mode}_games_count")
   def ranked?(mode) = games_played(mode).positive?
 
+  # Too few games for the rating to be trusted yet.
+  def provisional?(mode) = ranked?(mode) && games_played(mode) < Elo::UNSETTLED_GAMES
+
   def rank(mode)
     return unless ranked?(mode)
 

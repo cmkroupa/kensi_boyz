@@ -10,7 +10,7 @@
 <% else %>
   <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
     <div class="flex items-baseline gap-2">
-      <span class="text-5xl font-bold tabular-nums"><%= rating_text(@player.rating(current_mode)) %></span>
+      <span class="text-5xl font-bold tabular-nums"><%= rating_text(@player.rating(current_mode)) %><% if @player.provisional?(current_mode) %><span class="text-slate-400" title="Fewer than <%= Elo::UNSETTLED_GAMES %> games">?</span><% end %></span>
       <span class="text-base text-slate-500">#<%= @player.rank(current_mode) %> in <%= mode_label(current_mode) %></span>
     </div>
     <div class="mt-2"><%= rating_chart(RatingHistory.for_player(@player, current_mode)) %></div>
