@@ -6,11 +6,11 @@
     </ul>
   <% end %>
 
-  <div class="inline-flex rounded-full bg-slate-200 p-1 text-base">
+  <div class="flex w-full rounded-full bg-slate-200 p-1 text-base sm:w-64">
     <% Game.modes.each_key do |mode| %>
-      <label class="cursor-pointer">
+      <label class="flex-1 cursor-pointer">
         <%= form.radio_button :mode, mode, class: "peer sr-only", data: { action: "game-form#changeMode", game_form_target: "mode" } %>
-        <span class="block rounded-full px-4 py-1.5 font-medium text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm"><%= mode_label(mode) %></span>
+        <span class="block rounded-full px-4 py-2 text-center font-medium text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm"><%= mode_label(mode) %></span>
       </label>
     <% end %>
   </div>
