@@ -16,19 +16,5 @@
     <% end %>
   </ol>
 
-  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Settle up</h2>
-  <% if @transfers.empty? %>
-    <p class="mt-2 text-base text-slate-500">Everyone's square.</p>
-  <% else %>
-    <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-      <% @transfers.each do |transfer| %>
-        <li class="flex items-center justify-between gap-3 px-4 py-3 text-base">
-          <span class="min-w-0"><span class="font-medium"><%= transfer.from.name %></span> pays <span class="font-medium"><%= transfer.to.name %></span> <span class="font-semibold tabular-nums"><%= money_text(transfer.cents) %></span></span>
-          <%= button_to "Mark paid", payments_path, params: { payment: { from_player_id: transfer.from.id, to_player_id: transfer.to.id, cents: transfer.cents } },
-            data: { turbo_confirm: "#{transfer.from.name} paid #{transfer.to.name} #{money_text(transfer.cents)}?" },
-            class: "rounded-full bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300" %>
-        </li>
-      <% end %>
-    </ul>
-  <% end %>
+  <%= link_to "Who owes who →", debts_path, class: "mt-6 inline-block text-base text-blue-600 hover:underline" %>
 <% end %>

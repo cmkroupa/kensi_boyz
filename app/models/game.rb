@@ -6,6 +6,7 @@ class Game < ApplicationRecord
 
   has_many :participations, dependent: :destroy
   has_many :players, through: :participations
+  has_many :debts, dependent: :destroy
 
   attribute :played_at, default: -> { Time.current }
 
@@ -21,6 +22,7 @@ class Game < ApplicationRecord
   before_create :lock_bet_terms
   after_create :create_participations
   after_save { RatingReplay.call }
+  after_save :sync_debts
   after_destroy { RatingReplay.call }
 
   scope :chronologically, -> { order(:played_at, :id) }
@@ -83,6 +85,23 @@ class Game < ApplicationRecord
         underdog_stake_cents: underdog_stake_cents)
       self.favorite_side = terms.favorite_side
       self.favorite_stake_cents = terms.favorite_stake_cents
+    end
+
+    # Each loser owes one winner (paired in id order) what they risked. Debts that
+    # still match keep their paid status; the rest are replaced.
+    def sync_debts
+      wanted = debt_terms
+      debts.reload.each { |debt| debt.destroy unless wanted.delete([ debt.debtor_id, debt.creditor_id, debt.cents ]) }
+      wanted.each { |debtor_id, creditor_id, cents| debts.create!(debtor_id: debtor_id, creditor_id: creditor_id, cents: cents) }
+      debts.reset
+    end
+
+    def debt_terms
+      return [] unless bet?
+
+      losers = participants_on(loser_side).map(&:player_id).sort
+      winners = participants_on(winner_side).map(&:player_id).sort
+      losers.zip(winners).map { |loser, winner| [ loser, winner, winnings_for(winner_side) ] }
     end
 
     def team_rating(ids)

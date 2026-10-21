@@ -51,19 +51,11 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "form input[name='game[bet_dollars]']"
   end
 
-  test "the money view lists winnings and what to settle" do
+  test "the money view ranks net profit" do
     log_game(bet: 5)
     get leaderboard_path(view: "money")
 
-    assert_select "body", text: /Quinn pays Cam \$5/
-  end
-
-  test "marking a payment clears the debt" do
-    log_game(bet: 5)
-    post payments_path, params: { payment: { from_player_id: @quinn.id, to_player_id: @cam.id, cents: 500 } }
-    follow_redirect!
-
-    assert_select "body", text: /Everyone's square/
+    assert_select "ol li:first-child", text: /Cam.*\+\$5/m
   end
 
   test "the games page is history only" do

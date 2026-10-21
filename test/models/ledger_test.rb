@@ -52,21 +52,4 @@ class LedgerTest < ActiveSupport::TestCase
 
     assert_equal stake, game.reload.favorite_stake_cents
   end
-
-  test "settling up lists the fewest payments and payments clear them" do
-    log("singles", [ @cam ], [ @quinn ], 8, 3, bet: 5)
-    transfer = Ledger.transfers.sole
-
-    assert_equal [ @quinn, @cam, 500 ], [ transfer.from, transfer.to, transfer.cents ]
-
-    Payment.create!(from_player: @quinn, to_player: @cam, cents: 500)
-
-    assert_empty Ledger.transfers
-    assert_equal 0, net(@cam)
-  end
-
-  test "a payment must be to someone else and positive" do
-    assert_not Payment.new(from_player: @cam, to_player: @cam, cents: 100).valid?
-    assert_not Payment.new(from_player: @cam, to_player: @quinn, cents: 0).valid?
-  end
 end

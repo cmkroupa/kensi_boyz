@@ -1,4 +1,5 @@
 <% content_for :title, "#{@player.name} · KFL" %>
+<%= render "shared/back_link", label: "Leaderboard", path: root_path(mode: current_mode) %>
 <div class="flex items-center justify-between">
   <h1 class="text-3xl font-bold tracking-tight"><%= @player.name %></h1>
   <%= render "shared/mode_toggle", mode: current_mode, path: { name: :player_path, args: [ @player ] } %>
@@ -21,8 +22,8 @@
       [ "Win rate", percent_text(@player.win_rate(current_mode)) ],
       [ "Streak", @player.current_streak(current_mode).label, streak_class(@player.current_streak(current_mode)) ],
       [ "Best win streak", "#{@player.longest_win_streak(current_mode)}W", "" ],
-      (@bets.won + @bets.lost).positive? ? [ "Bet winnings", money_delta_text(@bets.net_cents), money_class(@bets.net_cents) ] : nil
-    ].compact.each do |label, value, color| %>
+      [ "Net profit", money_delta_text(@bets.net_cents), money_class(@bets.net_cents) ]
+    ].each do |label, value, color| %>
       <div class="rounded-xl border border-slate-200 bg-white px-3 py-3">
         <dt class="text-sm text-slate-500"><%= label %></dt>
         <dd class="text-xl font-semibold tabular-nums <%= color %>"><%= value %></dd>

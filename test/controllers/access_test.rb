@@ -64,7 +64,7 @@ class AccessTest < ActionDispatch::IntegrationTest
 
     [ root_path(mode: "doubles"), games_path, game_path(Game.first), game_path(doubles), team_path("#{cam.id}-#{quinn.id}"), games_path(player_id: cam.id),
       player_path(cam), player_path(cam, mode: "doubles"),
-      prediction_path, play_path, play_path(rematch: 1), root_path(view: "money"),
+      prediction_path, play_path, play_path(rematch: 1), root_path(view: "money"), debts_path,
       prediction_path(mode: "singles", side_a_player_ids: [ cam.id ], side_b_player_ids: [ quinn.id ]) ].each do |path|
       get path
       assert_response :success, path

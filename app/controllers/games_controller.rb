@@ -45,6 +45,8 @@ class GamesController < ApplicationController
       @mode = params[:mode] if Game.modes.key?(params[:mode])
       scope = Game.preloaded.newest_first
       scope = scope.where(mode: @mode) if @mode
+      @bets_only = params[:bets].present?
+      scope = scope.with_bet if @bets_only
       scope = scope.where(id: @player.games) if @player
       @page = [ params[:page].to_i, 1 ].max
       @games = scope.offset((@page - 1) * PER_PAGE).limit(PER_PAGE + 1).to_a

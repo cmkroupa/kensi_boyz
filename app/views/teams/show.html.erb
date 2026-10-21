@@ -1,4 +1,5 @@
 <% content_for :title, "#{@partnership.players.map(&:name).to_sentence(two_words_connector: ' & ')} · KFL" %>
+<%= render "shared/back_link", label: "Leaderboard", path: root_path(mode: "doubles") %>
 <p class="text-base text-slate-500">2v2 team</p>
 <h1 class="text-3xl font-bold tracking-tight">
   <% @partnership.players.each_with_index do |player, index| %>

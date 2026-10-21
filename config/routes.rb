@@ -6,7 +6,10 @@ Rails.application.routes.draw do
   resource :session, only: %i[ new create destroy ]
   resource :leaderboard, only: :show
   resource :play, only: :show
-  resources :payments, only: :create
+  resources :debts, only: :index do
+    resource :payment, only: %i[ create destroy ], module: :debts
+  end
+  resources :debt_settlements, only: :create
   resources :games, only: %i[ index show create edit update destroy ]
   resources :teams, only: :show
   resources :players, only: :show

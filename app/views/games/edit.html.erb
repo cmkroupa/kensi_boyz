@@ -1,4 +1,5 @@
 <% content_for :title, "Edit game · KFL" %>
+<%= render "shared/back_link", label: "Game", path: game_path(@game) %>
 <h1 class="text-2xl font-semibold tracking-tight">Edit score</h1>
 <p class="mt-1 text-base text-slate-500"><%= mode_label(@game.mode) %> · ratings are recalculated when you save.</p>
 

@@ -1,13 +1,16 @@
 <% content_for :title, "Games · KFL" %>
+<% if @player %><%= render "shared/back_link", label: @player.name, path: player_path(@player, mode: @mode || "singles") %><% end %>
 <h1 class="text-2xl font-semibold tracking-tight">
   <%= @player ? "#{@player.name}’s games" : "Games" %>
 </h1>
 
 <div class="mt-3 flex gap-2 text-base">
   <% { nil => "All", "singles" => "1v1", "doubles" => "2v2" }.each do |mode, label| %>
-    <%= link_to label, games_path(player_id: @player&.id, mode: mode),
+    <%= link_to label, games_path(player_id: @player&.id, mode: mode, bets: @bets_only || nil),
       class: [ "rounded-full px-3 py-1.5", mode == @mode ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-600" ] %>
   <% end %>
+  <%= link_to "$ Bets", games_path(player_id: @player&.id, mode: @mode, bets: @bets_only ? nil : 1),
+    class: [ "rounded-full px-3 py-1.5", @bets_only ? "bg-green-600 text-white" : "bg-slate-200 text-slate-600" ] %>
 </div>
 
 <% if @games.empty? %>
@@ -23,7 +26,7 @@
     <% end %>
   </div>
   <div class="mt-4 flex justify-between text-base">
-    <% if @page > 1 %><%= link_to "← Newer", games_path(player_id: @player&.id, mode: @mode, page: @page - 1), class: "text-blue-600" %><% else %><span></span><% end %>
-    <% if @more %><%= link_to "Older →", games_path(player_id: @player&.id, mode: @mode, page: @page + 1), class: "text-blue-600" %><% end %>
+    <% if @page > 1 %><%= link_to "← Newer", games_path(player_id: @player&.id, mode: @mode, bets: @bets_only || nil, page: @page - 1), class: "text-blue-600" %><% else %><span></span><% end %>
+    <% if @more %><%= link_to "Older →", games_path(player_id: @player&.id, mode: @mode, bets: @bets_only || nil, page: @page + 1), class: "text-blue-600" %><% end %>
   </div>
 <% end %>

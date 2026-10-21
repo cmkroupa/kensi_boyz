@@ -8,6 +8,7 @@ module ApplicationHelper
     case controller_name
     when "games" then :games
     when "plays" then :play
+    when "debts", "payments", "debt_settlements" then :debts
     when "predictions" then :predict
     else :leaderboard
     end
