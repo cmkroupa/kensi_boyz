@@ -1,0 +1,29 @@
+<% content_for :title, "Head to head · KFL" %>
+<h1 class="text-2xl font-semibold tracking-tight">Head to head</h1>
+<p class="mt-1 text-base text-slate-500">Pick two players, or two pairs, and see how they've done against each other.</p>
+
+<%= form_with url: head_to_head_path, method: :get, data: { controller: "game-form", game_form_auto_submit_value: true, turbo_frame: "head_to_head" }, class: "mt-4 space-y-6" do %>
+  <div class="flex w-full rounded-full bg-slate-200 p-1 text-base sm:w-64">
+    <% Game.modes.each_key do |mode| %>
+      <label class="flex-1 cursor-pointer">
+        <%= radio_button_tag :mode, mode, current_mode == mode, class: "peer sr-only", data: { action: "game-form#changeMode", game_form_target: "mode" } %>
+        <span class="block rounded-full px-4 py-2 text-center font-medium text-slate-500 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm"><%= mode_label(mode) %></span>
+      </label>
+    <% end %>
+  </div>
+
+  <% { "a" => [ "Side 1", @side_a_ids ], "b" => [ "Side 2", @side_b_ids ] }.each do |side, (label, ids)| %>
+    <fieldset>
+      <legend class="text-base font-semibold uppercase tracking-wide text-slate-500"><%= label %></legend>
+      <%= render "shared/team_picker", side: side, label: label, players: @players, selected_ids: ids, name_prefix: "", name_suffix: "" %>
+    </fieldset>
+  <% end %>
+<% end %>
+
+<%= turbo_frame_tag "head_to_head", target: "_top", data: { game_form_target: "result" } do %>
+  <% if @error %>
+    <p class="mt-6 rounded-lg bg-rose-50 px-3 py-3 text-base text-rose-800"><%= @error %></p>
+  <% elsif @head_to_head %>
+    <%= render "head_to_heads/result", head_to_head: @head_to_head %>
+  <% end %>
+<% end %>

@@ -1,0 +1,70 @@
+<%# locals: (head_to_head:) %>
+<% name_a = head_to_head.side_a.map(&:name).to_sentence(two_words_connector: " & ") %>
+<% name_b = head_to_head.side_b.map(&:name).to_sentence(two_words_connector: " & ") %>
+<% prediction = head_to_head.prediction %>
+
+<section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 text-center">
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+    <p class="min-w-0 break-words text-right text-base font-semibold"><%= name_a %></p>
+    <p class="text-5xl font-bold tabular-nums"><%= head_to_head.a_wins %>–<%= head_to_head.b_wins %></p>
+    <p class="min-w-0 break-words text-left text-base font-semibold"><%= name_b %></p>
+  </div>
+  <p class="mt-3 text-base text-slate-500">
+    <% if head_to_head.games.zero? %>
+      They haven't played each other yet.
+    <% else %>
+      <%= pluralize(head_to_head.games, "game") %> · <%= name_a %> win <%= percent_text(head_to_head.a_win_rate) %>
+    <% end %>
+  </p>
+  <p class="mt-1 text-base text-slate-500">
+    Today <span class="font-semibold text-slate-900"><%= prediction.favorite.map(&:name).to_sentence(two_words_connector: " & ") %></span>
+    <%= percent_text(prediction.confidence) %> to win.
+  </p>
+</section>
+
+<% if head_to_head.games.positive? %>
+  <dl class="mt-3 grid grid-cols-2 gap-3 text-base">
+    <% streak = head_to_head.current_streak %>
+    <% [
+      [ "Avg score", "#{number_with_precision(head_to_head.average_points(:a), precision: 1)}–#{number_with_precision(head_to_head.average_points(:b), precision: 1)}" ],
+      [ "Streak", "#{streak.side_a ? name_a : name_b} · #{streak.length}W" ],
+      [ "#{name_a} avg win", head_to_head.average_win_margin(:a) ? "by #{number_with_precision(head_to_head.average_win_margin(:a), precision: 1)}" : "—" ],
+      [ "#{name_b} avg win", head_to_head.average_win_margin(:b) ? "by #{number_with_precision(head_to_head.average_win_margin(:b), precision: 1)}" : "—" ]
+    ].each do |label, value| %>
+      <div class="rounded-xl border border-slate-200 bg-white px-3 py-3">
+        <dt class="truncate text-sm text-slate-500"><%= label %></dt>
+        <dd class="truncate text-xl font-semibold tabular-nums"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <% [ [ :a, name_a ], [ :b, name_b ] ].each do |side, name| %>
+    <% win = head_to_head.biggest_win(side) %>
+    <% if win %>
+      <%= link_to game_path(win.game), class: "mt-3 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-base hover:bg-blue-50" do %>
+        <span class="min-w-0 truncate text-slate-500">Biggest win · <span class="font-medium text-slate-900"><%= name %></span></span>
+        <span class="font-semibold tabular-nums"><%= [ win.a_points, win.b_points ].max %>–<%= [ win.a_points, win.b_points ].min %> <span class="font-normal text-slate-400"><%= l(win.game.played_at, format: "%b %-d") %></span></span>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if head_to_head.series.any? %>
+  <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+    <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
+      <% head_to_head.series.each do |line| %>
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background: <%= line.color %>"></span><%= line.name %></span>
+      <% end %>
+    </div>
+    <div class="mt-2"><%= rating_chart(head_to_head.series) %></div>
+  </div>
+<% end %>
+
+<% if head_to_head.recent.any? %>
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Meetings</h2>
+  <div class="mt-2 divide-y divide-slate-200">
+    <% head_to_head.recent.each do |meeting| %>
+      <%= render "shared/game", game: meeting.game %>
+    <% end %>
+  </div>
+<% end %>

@@ -135,4 +135,31 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_predicate Setting, :decay_enabled?
   end
+
+  test "the head to head page shows the record between two players" do
+    log_game
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "body", text: /1–0/
+    assert_select "body", text: /Cam win 100%/
+    assert_select "h2", text: "Meetings"
+  end
+
+  test "the head to head page handles players who have never met" do
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "body", text: /haven't played each other yet/
+  end
+
+  test "head to head is linked from games, profiles and predictions" do
+    log_game
+    get game_path(Game.last)
+    assert_select "a", text: "Head to head"
+
+    get player_path(@cam)
+    assert_select "a", text: "vs Quinn"
+
+    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+    assert_select "a", text: /Head to head/
+  end
 end

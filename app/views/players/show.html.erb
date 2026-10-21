@@ -64,7 +64,11 @@
   <ul class="mt-2 divide-y divide-slate-200 text-base">
     <% @rivalries.each do |rivalry| %>
       <li class="flex justify-between py-3">
-        <span>vs <%= rivalry.other.name %></span>
+        <% if current_mode == "singles" %>
+          <%= link_to "vs #{rivalry.other.name}", head_to_head_path(mode: "singles", side_a_player_ids: [ @player.id ], side_b_player_ids: [ rivalry.other.id ]), class: "text-blue-600 hover:underline" %>
+        <% else %>
+          <span>vs <%= rivalry.other.name %></span>
+        <% end %>
         <span class="text-slate-500 tabular-nums"><%= rivalry.wins %>-<%= rivalry.losses %> · <span class="font-semibold text-slate-900"><%= percent_text(rivalry.win_rate) %></span></span>
       </li>
     <% end %>
