@@ -43,6 +43,26 @@
   </div>
 <% end %>
 
+<% earned = @game.achievements.includes(:player).sort_by { |achievement| achievement.player.name } %>
+<% broken = @game.record_breaks %>
+<% if earned.any? || broken.any? %>
+  <h2 class="mt-6 text-base font-semibold uppercase tracking-wide text-slate-500">Earned in this game</h2>
+  <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white text-base">
+    <% broken.each do |record| %>
+      <li class="flex items-center justify-between gap-3 px-4 py-3">
+        <span><span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Record</span> <%= record.label %></span>
+        <span class="font-semibold tabular-nums"><%= record_value_text(record) %></span>
+      </li>
+    <% end %>
+    <% earned.each do |achievement| %>
+      <li class="flex items-center justify-between gap-3 px-4 py-3">
+        <span class="font-medium"><%= achievement.player.name %></span>
+        <span class="text-right"><%= achievement.name %> <span class="text-sm text-slate-400"><%= achievement.description %></span></span>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
 <div class="mt-4 flex flex-wrap items-center gap-3">
   <%= render "shared/formula", label: "How this was calculated", game: @game %>
   <%= link_to "Head to head", head_to_head_path(mode: @game.mode, side_a_player_ids: @game.participants_on(@game.winner_side).map(&:player_id), side_b_player_ids: @game.participants_on(@game.loser_side).map(&:player_id)),

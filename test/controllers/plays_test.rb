@@ -182,4 +182,37 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "When you play"
     assert_select "li", text: /Morning|Afternoon|Evening|Late night/
   end
+
+  test "badges show on the profile and on the game that earned them" do
+    game = Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0,
+      side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    get player_path(@cam)
+    assert_select "h2", text: /Achievements · 2/
+    assert_select "li", text: /Shutout/
+    assert_select "summary", text: /Not yet earned/
+
+    get game_path(game)
+    assert_select "h2", text: "Earned in this game"
+    assert_select "li", text: /Cam.*First blood/m
+  end
+
+  test "the records page lists what has been set" do
+    get records_path
+    assert_select "body", text: /No records yet/
+
+    3.times { Game.create!(mode: "singles", side_a_score: 8, side_b_score: 1, side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ]) }
+    get records_path
+
+    assert_select "body", text: /Longest win streak \(1v1\)/
+    assert_select "body", text: /3 wins/
+    assert_select "h2", text: "Latest badges"
+    assert_select "a", text: "← Leaderboard"
+  end
+
+  test "the leaderboard links to the records page" do
+    get root_path
+
+    assert_select "a[href='#{records_path}']"
+  end
 end

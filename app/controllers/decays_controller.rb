@@ -15,6 +15,6 @@ class DecaysController < ApplicationController
   private
     def switch(on)
       Setting.switch("decay", on)
-      RatingReplay.call
+      Game.rebuild_derived_data
     end
 end

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :players, only: :show
   resource :prediction, only: :show
   resource :head_to_head, only: :show
+  resource :records, only: :show
 
   root "leaderboards#show"
 end

@@ -8,6 +8,8 @@ class Game < ApplicationRecord
   has_many :participations, dependent: :destroy
   has_many :players, through: :participations
   has_many :debts, dependent: :destroy
+  has_many :achievements, dependent: :destroy
+  has_many :record_breaks, dependent: :destroy
 
   attribute :played_at, default: -> { Time.current }
 
@@ -22,9 +24,9 @@ class Game < ApplicationRecord
 
   before_create :lock_bet_terms
   after_create :create_participations
-  after_save { RatingReplay.call }
+  after_save { Game.rebuild_derived_data }
   after_save :sync_debts
-  after_destroy { RatingReplay.call }
+  after_destroy { Game.rebuild_derived_data }
 
   scope :chronologically, -> { order(:played_at, :id) }
   scope :newest_first, -> { order(played_at: :desc, id: :desc) }
@@ -35,6 +37,12 @@ class Game < ApplicationRecord
   def side_b_player_ids = Array(@side_b_player_ids).compact_blank.map(&:to_i)
 
   # The bet is entered in whole dollars and is what the underdog puts up.
+  # Everything computed by replaying the whole history: ratings, then badges and records.
+  def self.rebuild_derived_data
+    RatingReplay.call
+    AchievementReplay.call
+  end
+
   def bet_dollars = underdog_stake_cents / 100
   def bet_dollars=(dollars)
     self.underdog_stake_cents = dollars.to_i * 100

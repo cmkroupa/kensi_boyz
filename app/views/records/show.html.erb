@@ -1,0 +1,36 @@
+<% content_for :title, "Records · KFL" %>
+<%= render "shared/back_link", label: "Leaderboard", path: root_path %>
+<h1 class="text-2xl font-semibold tracking-tight">League records</h1>
+
+<% if @records.empty? %>
+  <p class="mt-4 text-base text-slate-500">No records yet. They show up once someone puts together a real streak or a big result.</p>
+<% else %>
+  <ul class="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+    <% @records.each do |record| %>
+      <li>
+        <%= link_to game_path(record.game), class: "flex items-center justify-between gap-3 px-4 py-4 hover:bg-blue-50" do %>
+          <span class="min-w-0">
+            <span class="block text-sm text-slate-500"><%= record.label %></span>
+            <span class="block truncate font-medium"><%= record.player && %w[ biggest_blowout biggest_upset ].exclude?(record.key) ? record.player.name : names(record.game.participants_on(record.game.winner_side)) %></span>
+            <span class="block text-sm text-slate-400"><%= l(record.game.played_at, format: "%b %-d") %></span>
+          </span>
+          <span class="shrink-0 text-xl font-semibold tabular-nums"><%= record_value_text(record) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @recent_achievements.any? %>
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Latest badges</h2>
+  <ul class="mt-2 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+    <% @recent_achievements.each do |achievement| %>
+      <li>
+        <%= link_to game_path(achievement.game), class: "flex items-center justify-between gap-3 px-4 py-3 text-base hover:bg-blue-50" do %>
+          <span class="min-w-0 truncate"><span class="font-medium"><%= achievement.player.name %></span> <span class="text-slate-500">earned</span> <%= achievement.name %></span>
+          <span class="shrink-0 text-sm text-slate-400"><%= l(achievement.game.played_at, format: "%b %-d") %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

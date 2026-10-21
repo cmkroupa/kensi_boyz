@@ -4,6 +4,8 @@ class Player < ApplicationRecord
 
   has_many :participations, dependent: :destroy
   has_many :games, through: :participations
+  has_many :achievements, dependent: :destroy
+  has_many :record_breaks, dependent: :nullify
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 

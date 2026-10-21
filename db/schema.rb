@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_051608) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_21_052013) do
+  create_table "achievements", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "game_id", null: false
+    t.string "key", null: false
+    t.string "scope", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_achievements_on_game_id"
+    t.index ["player_id", "key", "scope"], name: "index_achievements_on_player_id_and_key_and_scope", unique: true
+    t.index ["player_id"], name: "index_achievements_on_player_id"
+  end
+
   create_table "debts", force: :cascade do |t|
     t.integer "game_id", null: false
     t.integer "debtor_id", null: false
@@ -61,6 +73,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_051608) do
     t.index ["name"], name: "index_players_on_name", unique: true
   end
 
+  create_table "record_breaks", force: :cascade do |t|
+    t.integer "game_id", null: false
+    t.integer "player_id"
+    t.string "key", null: false
+    t.string "scope", null: false
+    t.float "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_record_breaks_on_game_id"
+    t.index ["key", "scope"], name: "index_record_breaks_on_key_and_scope"
+    t.index ["player_id"], name: "index_record_breaks_on_player_id"
+  end
+
   create_table "settings", force: :cascade do |t|
     t.string "key", null: false
     t.string "value", null: false
@@ -69,9 +94,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_051608) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
+  add_foreign_key "achievements", "games"
+  add_foreign_key "achievements", "players"
   add_foreign_key "debts", "games"
   add_foreign_key "debts", "players", column: "creditor_id"
   add_foreign_key "debts", "players", column: "debtor_id"
   add_foreign_key "participations", "games"
   add_foreign_key "participations", "players"
+  add_foreign_key "record_breaks", "games"
+  add_foreign_key "record_breaks", "players"
 end

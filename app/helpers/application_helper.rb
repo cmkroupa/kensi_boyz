@@ -48,6 +48,18 @@ module ApplicationHelper
     cents.positive? ? "text-green-600" : "text-red-500"
   end
 
+  # "7 wins", "12% chance" and so on for a league record.
+  def record_value_text(record)
+    case record.key
+    when "win_streak" then pluralize(record.value.to_i, "win")
+    when "shutout_streak" then pluralize(record.value.to_i, "shutout")
+    when "highest_rating" then record.value.round.to_s
+    when "biggest_blowout" then "#{record.game.score_for(record.game.winner_side)}–#{record.game.score_for(record.game.loser_side)}"
+    when "biggest_upset" then "#{percent_text(record.value)} chance"
+    when "most_games_in_day" then pluralize(record.value.to_i, "game")
+    end
+  end
+
   def percent_text(fraction) = fraction ? "#{(fraction * 100).round}%" : "—"
 
   def names(participations)
