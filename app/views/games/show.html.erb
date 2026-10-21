@@ -65,7 +65,7 @@
 
 <div class="mt-4 flex flex-wrap items-center gap-3">
   <%= render "shared/formula", label: "How this was calculated", game: @game %>
-  <%= link_to "Head to head", head_to_head_path(mode: @game.mode, side_a_player_ids: @game.participants_on(@game.winner_side).map(&:player_id), side_b_player_ids: @game.participants_on(@game.loser_side).map(&:player_id)),
+  <%= link_to "Matchup", head_to_head_path(mode: @game.mode, side_a_player_ids: @game.participants_on(@game.winner_side).map(&:player_id), side_b_player_ids: @game.participants_on(@game.loser_side).map(&:player_id)),
     class: "rounded-full bg-slate-200 px-4 py-2 text-base font-medium text-slate-700 hover:bg-slate-300" %>
 </div>
 

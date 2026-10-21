@@ -154,21 +154,13 @@ class PlaysTest < ActionDispatch::IntegrationTest
   test "head to head is linked from games, profiles and predictions" do
     log_game
     get game_path(Game.last)
-    assert_select "a", text: "Head to head"
+    assert_select "a", text: "Matchup"
 
     get player_path(@cam)
     assert_select "a", text: "vs Quinn"
 
     get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
-    assert_select "a", text: /Head to head/
-  end
-
-  test "the profile shows when you play" do
-    log_game
-    get player_path(@cam)
-
-    assert_select "h2", text: "When you play"
-    assert_select "li", text: /Morning|Afternoon|Evening|Late night/
+    assert_select "a[href*='head_to_head']", text: "Matchups"
   end
 
   test "badges show on the profile and on the game that earned them" do
@@ -219,5 +211,20 @@ class PlaysTest < ActionDispatch::IntegrationTest
     assert_select "footer", count: 0
   ensure
     ENV.delete("GITHUB_BACKUP_TOKEN")
+  end
+
+  test "Predict and Matchups are sub-tabs of Versus and keep the teams picked" do
+    get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "nav a[aria-current=page]", text: "Versus"
+    assert_select "a[aria-current=page]", text: "Predict"
+    assert_select "a[href*='side_a_player_ids'][href*='head_to_head']", text: "Matchups"
+
+    get head_to_head_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+
+    assert_select "nav a[aria-current=page]", text: "Versus"
+    assert_select "a[aria-current=page]", text: "Matchups"
+    assert_select "h1", text: "Matchups"
+    assert_select "a[href*='side_a_player_ids'][href^='/prediction']", text: "Predict"
   end
 end

@@ -1,5 +1,6 @@
-<% content_for :title, "Head to head · KFL" %>
-<h1 class="text-2xl font-semibold tracking-tight">Head to head</h1>
+<% content_for :title, "Matchups · KFL" %>
+<%= render "shared/versus_tabs", active: :matchups %>
+<h1 class="text-2xl font-semibold tracking-tight">Matchups</h1>
 <p class="mt-1 text-base text-slate-500">Pick two players, or two pairs, and see how they've done against each other.</p>
 
 <%= form_with url: head_to_head_path, method: :get, data: { controller: "game-form", game_form_auto_submit_value: true, turbo_frame: "head_to_head" }, class: "mt-4 space-y-6" do %>

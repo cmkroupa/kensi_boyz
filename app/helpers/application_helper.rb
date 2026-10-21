@@ -9,7 +9,7 @@ module ApplicationHelper
     when "games" then :games
     when "plays" then :play
     when "debts", "payments", "debt_settlements" then :debts
-    when "predictions" then :predict
+    when "predictions", "head_to_heads" then :versus
     else :leaderboard
     end
   end

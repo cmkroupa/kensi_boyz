@@ -1,0 +1,9 @@
+<%# locals: (active:) %>
+<%# Predict and Matchups share the Versus tab; the teams picked carry over when you switch. %>
+<% picks = { mode: current_mode, side_a_player_ids: @side_a_ids, side_b_player_ids: @side_b_ids } %>
+<div class="mb-4 inline-flex rounded-full bg-slate-200 p-1 text-base">
+  <% { predict: [ "Predict", prediction_path(picks) ], matchups: [ "Matchups", head_to_head_path(picks) ] }.each do |key, (label, path)| %>
+    <%= link_to label, path, "aria-current": (key == active ? "page" : nil),
+      class: [ "rounded-full px-5 py-1.5 font-medium", key == active ? "bg-white shadow-sm" : "text-slate-500" ] %>
+  <% end %>
+</div>
