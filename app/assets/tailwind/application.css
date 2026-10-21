@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Everything is sized in rem, so bumping the root size scales the whole UI up on laptops. */
+@layer base {
+  /* Reserve scrollbar space so the centered layout never shifts between short and long pages. */
+  html { scrollbar-gutter: stable; }
+
+  @media (min-width: 1024px) {
+    html { font-size: 18px; }
+  }
+}
