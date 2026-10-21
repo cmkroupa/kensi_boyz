@@ -60,6 +60,15 @@
       <% end %>
     </dl>
   <% end %>
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">When you play</h2>
+  <ul class="mt-2 divide-y divide-slate-200 text-base">
+    <% @time_of_day.each do |bucket, (wins, losses)| %>
+      <li class="flex justify-between py-3">
+        <span><%= bucket %><% if bucket == @best_time %> <span class="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">Best</span><% end %></span>
+        <span class="text-slate-500 tabular-nums"><%= wins %>-<%= losses %><% if wins + losses > 0 %> · <span class="font-semibold text-slate-900"><%= percent_text(wins.fdiv(wins + losses)) %></span><% end %></span>
+      </li>
+    <% end %>
+  </ul>
   <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Head to head · <%= mode_label(current_mode) %></h2>
   <ul class="mt-2 divide-y divide-slate-200 text-base">
     <% @rivalries.each do |rivalry| %>

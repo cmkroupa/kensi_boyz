@@ -1,0 +1,35 @@
+<% if @activity.total.zero? %>
+  <p class="mt-6 text-base text-slate-500">No games yet.</p>
+<% else %>
+  <% busiest_date, busiest_count = @activity.busiest_day %>
+  <% peak = @activity.peak_hour %>
+  <dl class="mt-4 grid grid-cols-2 gap-3 text-base">
+    <% [
+      [ "Games played", @activity.total ],
+      [ "Day streak", pluralize(@activity.day_streak, "day") ],
+      [ "Busiest day", "#{l(busiest_date, format: "%b %-d")} · #{busiest_count}" ],
+      [ "Peak hour", "#{hour_text(peak)}–#{hour_text((peak + 1) % 24)}" ]
+    ].each do |label, value| %>
+      <div class="rounded-xl border border-slate-200 bg-white px-3 py-3">
+        <dt class="text-sm text-slate-500"><%= label %></dt>
+        <dd class="text-xl font-semibold tabular-nums"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <% days = @activity.per_day %>
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Games per day · last 30 days</h2>
+  <div class="mt-2 rounded-2xl border border-slate-200 bg-white p-4">
+    <%= bar_chart(days.map(&:last), labels: { 0 => l(days.first.first, format: "%b %-d"), 14 => l(days[14].first, format: "%b %-d"), 29 => "Today" }, label: "Games per day") %>
+  </div>
+
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Time of day</h2>
+  <div class="mt-2 rounded-2xl border border-slate-200 bg-white p-4">
+    <%= bar_chart(@activity.by_hour, labels: { 0 => "12am", 6 => "6am", 12 => "12pm", 18 => "6pm" }, label: "Games by hour") %>
+  </div>
+
+  <h2 class="mt-8 text-base font-semibold uppercase tracking-wide text-slate-500">Day of the week</h2>
+  <div class="mt-2 rounded-2xl border border-slate-200 bg-white p-4">
+    <%= bar_chart(@activity.by_weekday, labels: %w[ M T W T F S S ].each_with_index.to_h { |text, index| [ index, text ] }, label: "Games by weekday") %>
+  </div>
+<% end %>

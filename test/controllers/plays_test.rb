@@ -162,4 +162,24 @@ class PlaysTest < ActionDispatch::IntegrationTest
     get prediction_path(mode: "singles", side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
     assert_select "a", text: /Head to head/
   end
+
+  test "the activity view shows charts once there are games" do
+    get root_path(view: "activity")
+    assert_select "body", text: /No games yet/
+
+    log_game
+    get root_path(view: "activity")
+
+    assert_select "svg[aria-label='Games per day']"
+    assert_select "dt", text: "Peak hour"
+    assert_select "a", text: "Activity"
+  end
+
+  test "the profile shows when you play" do
+    log_game
+    get player_path(@cam)
+
+    assert_select "h2", text: "When you play"
+    assert_select "li", text: /Morning|Afternoon|Evening|Late night/
+  end
 end
