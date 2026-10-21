@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resource :session, only: %i[ new create destroy ]
   resource :leaderboard, only: :show
   resource :play, only: :show
+  resource :decay, only: %i[ create destroy ]
   resources :debts, only: :index do
     resource :payment, only: %i[ create destroy ], module: :debts
   end

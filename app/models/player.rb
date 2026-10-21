@@ -20,6 +20,8 @@ class Player < ApplicationRecord
 
   # Days since the last game in a mode, once past the grace period (otherwise nil).
   def idle_days(mode)
+    return unless Setting.decay_enabled?
+
     last = participations.joins(:game).where(games: { mode: Game.modes.fetch(mode) }).maximum("games.played_at")
     return unless last
 

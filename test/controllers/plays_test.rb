@@ -112,4 +112,27 @@ class PlaysTest < ActionDispatch::IntegrationTest
 
     assert_select "span", text: "Upset"
   end
+
+  test "only admins can switch decay, and it takes effect" do
+    delete decay_path
+
+    assert_redirected_to root_path
+    assert_predicate Setting, :decay_enabled?
+
+    delete session_path
+    post session_path, params: { passcode: "2477" }
+    get root_path
+
+    assert_select "button", text: "Turn off"
+
+    delete decay_path
+
+    assert_not Setting.decay_enabled?
+    get root_path
+    assert_select "button", text: "Turn on"
+
+    post decay_path
+
+    assert_predicate Setting, :decay_enabled?
+  end
 end

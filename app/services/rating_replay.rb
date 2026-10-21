@@ -12,6 +12,7 @@ class RatingReplay
 
   def call
     Player.transaction do
+      @decay = Setting.decay_enabled?
       @standings = Hash.new { |hash, key| hash[key] = Standing.new(Elo::BASE_RATING, 0, nil) }
       Game.chronologically.includes(:participations).each { |game| replay(game) }
       decay_all_to(Time.current)
@@ -53,7 +54,7 @@ class RatingReplay
 
     # Pulls an idle player's rating toward the start as of the given time.
     def decay(standing, time)
-      return unless standing.last_played
+      return unless standing.last_played && @decay
 
       standing.rating = Elo.decayed(standing.rating, (time - standing.last_played) / 86_400.0)
       standing.last_played = time

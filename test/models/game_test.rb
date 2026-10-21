@@ -149,4 +149,22 @@ class GameTest < ActiveSupport::TestCase
       assert_equal 1000, @cam.reload.singles_rating
     end
   end
+
+  test "turning decay off stops ratings drifting and restores them" do
+    travel_to Time.zone.local(2026, 1, 1, 12) do
+      Game.create!(mode: "singles", side_a_score: 8, side_b_score: 0, played_at: Time.current,
+        side_a_player_ids: [ @cam.id ], side_b_player_ids: [ @quinn.id ])
+      fresh = @cam.reload.singles_rating
+      travel_to 6.weeks.from_now
+      RatingReplay.call
+
+      assert_operator @cam.reload.singles_rating, :<, fresh
+
+      Setting.switch("decay", false)
+      RatingReplay.call
+
+      assert_in_delta fresh, @cam.reload.singles_rating
+      assert_nil @cam.idle_days("singles")
+    end
+  end
 end
